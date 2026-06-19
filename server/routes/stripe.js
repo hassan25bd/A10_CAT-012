@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Ebook = require('../models/Ebook');
+
+// Lazy Stripe init so missing key doesn't crash the module at load time
+let _stripe;
+const getStripe = () => {
+  if (!_stripe) _stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  return _stripe;
+};
 const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
 
@@ -24,7 +30,7 @@ router.post('/checkout', protect, async (req, res) => {
     });
     if (already) return res.status(400).json({ message: 'Already purchased' });
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
@@ -70,7 +76,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   const sig = req.headers['stripe-signature'];
   let event;
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
@@ -107,7 +113,7 @@ router.get('/verify/:sessionId', protect, async (req, res) => {
 // POST /api/stripe/writer-verification  — writer pays one-time fee
 router.post('/writer-verification', protect, async (req, res) => {
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
