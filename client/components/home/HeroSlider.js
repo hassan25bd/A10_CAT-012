@@ -1,263 +1,350 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ArrowRight, ChevronLeft, ChevronRight, Star, Users, TrendingUp } from 'lucide-react';
+import { motion, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import { ArrowRight, BookOpen, Star, Users, TrendingUp } from 'lucide-react';
 
-const slides = [
-  {
-    id: 1,
-    tag: 'New Arrivals',
-    headline: ['Discover Stories', 'That Move You'],
-    subline: 'Thousands of hand-crafted ebooks from talented writers — every genre, every mood.',
-    cta: 'Browse Ebooks',
-    ctaLink: '/browse',
-    accent: '#6366f1',
-    accentLight: '#EEF2FF',
-    stack: [
-      { img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&q=85', rotate: '-6deg', y: '0px',   x: '0px',   z: 3 },
-      { img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&q=85', rotate: '3deg',  y: '48px',  x: '24px',  z: 2 },
-      { img: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&q=85', rotate: '-2deg', y: '90px',  x: '-12px', z: 1 },
-    ],
-  },
-  {
-    id: 2,
-    tag: 'Fan Favorites',
-    headline: ['Stories That', 'Stay With You'],
-    subline: 'Mystery, romance, sci-fi, fantasy — find your next obsession on Fable.',
-    cta: 'Explore Genres',
-    ctaLink: '/browse',
-    accent: '#8b5cf6',
-    accentLight: '#F5F3FF',
-    stack: [
-      { img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=500&q=85', rotate: '5deg',  y: '0px',   x: '0px',   z: 3 },
-      { img: 'https://images.unsplash.com/photo-1551269901-5c5e5b2cc29d?w=500&q=85', rotate: '-4deg', y: '52px',  x: '16px',  z: 2 },
-      { img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=85', rotate: '1deg',  y: '98px',  x: '-8px',  z: 1 },
-    ],
-  },
-  {
-    id: 3,
-    tag: 'For Writers',
-    headline: ['Publish Your', 'Masterpiece'],
-    subline: 'Join our growing community of authors. Share your voice with readers worldwide.',
-    cta: 'Start Writing',
-    ctaLink: '/register',
-    accent: '#f59e0b',
-    accentLight: '#FFFBEB',
-    stack: [
-      { img: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=500&q=85', rotate: '-4deg', y: '0px',   x: '0px',   z: 3 },
-      { img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=85', rotate: '6deg',  y: '44px',  x: '20px',  z: 2 },
-      { img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=85', rotate: '-2deg', y: '86px',  x: '-16px', z: 1 },
-    ],
-  },
+const GENRES = [
+  { name: 'Fiction',   bg: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=85', color: '#60A5FA', tagline: 'Worlds built from words' },
+  { name: 'Mystery',   bg: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920&q=85', color: '#FCD34D', tagline: 'Every clue tells a story' },
+  { name: 'Romance',   bg: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&q=85', color: '#F9A8D4', tagline: 'Hearts in every page' },
+  { name: 'Sci-Fi',    bg: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=1920&q=85', color: '#6EE7B7', tagline: 'Beyond the stars' },
+  { name: 'Fantasy',   bg: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&q=85', color: '#C4B5FD', tagline: 'Magic lives between these lines' },
+  { name: 'Horror',    bg: 'https://images.unsplash.com/photo-1520116468816-95b69f847357?w=1920&q=85', color: '#FCA5A5', tagline: 'Dare to turn the page' },
+  { name: 'Thriller',  bg: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1920&q=85', color: '#FDBA74', tagline: 'Every second counts' },
+  { name: 'Adventure', bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85', color: '#86EFAC', tagline: 'The journey awaits' },
 ];
 
-const stats = [
-  { icon: BookOpen,    label: 'Ebooks',       value: '1,200+' },
-  { icon: Users,       label: 'Readers',      value: '8,500+' },
-  { icon: Star,        label: 'Writers',      value: '340+'   },
-  { icon: TrendingUp,  label: 'Monthly Sales',value: '2,100+' },
+const STATS = [
+  { icon: BookOpen,    value: '1,200+', label: 'Ebooks'       },
+  { icon: Users,       value: '8,500+', label: 'Readers'      },
+  { icon: Star,        value: '340+',   label: 'Writers'      },
+  { icon: TrendingUp,  value: '2,100+', label: 'Monthly Sales'},
 ];
+
+const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: 0.8 + Math.random() * 2,
+  duration: 6 + Math.random() * 10,
+  delay: Math.random() * 8,
+  opacity: 0.15 + Math.random() * 0.35,
+}));
 
 export default function HeroSlider() {
-  const [current, setCurrent] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
+  const containerRef = useRef(null);
+  const [active, setActive]   = useState(1);
+  const [cursor, setCursor]   = useState({ x: -200, y: -200, visible: false });
 
+  /* ── Spring-smoothed mouse tracking ── */
+  const cfg = { stiffness: 30, damping: 18 };
+  const mouseX = useSpring(0, cfg);
+  const mouseY = useSpring(0, cfg);
+
+  /* ── Per-layer parallax transforms ── */
+  const bgX  = useTransform(mouseX, v => `${v * 0.18}px`);
+  const bgY  = useTransform(mouseY, v => `${v * 0.18}px`);
+  const ptX  = useTransform(mouseX, v => `${v * 0.45}px`);
+  const ptY  = useTransform(mouseY, v => `${v * 0.45}px`);
+  const fgX  = useTransform(mouseX, v => `${v * 0.9}px`);
+  const fgY  = useTransform(mouseY, v => `${v * 0.9}px`);
+  const txX  = useTransform(mouseX, v => `${v * 0.1}px`);
+  const txY  = useTransform(mouseY, v => `${v * 0.1}px`);
+
+  const onMouseMove = (e) => {
+    const r = containerRef.current?.getBoundingClientRect();
+    if (!r) return;
+    mouseX.set((e.clientX / r.width  - 0.5) * 100);
+    mouseY.set((e.clientY / r.height - 0.5) * 70);
+    setCursor({ x: e.clientX, y: e.clientY, visible: true });
+  };
+  const onMouseLeave = () => {
+    mouseX.set(0); mouseY.set(0);
+    setCursor(c => ({ ...c, visible: false }));
+  };
+
+  const genre = GENRES[active];
+
+  /* ── Circular genre label positions ── */
+  const R = 132;
+  const labelPositions = GENRES.map((g, i) => {
+    const angle = (i / GENRES.length) * 360 - 90;
+    const rad   = angle * Math.PI / 180;
+    return { ...g, i, x: Math.cos(rad) * R, y: Math.sin(rad) * R, angle };
+  });
+
+  /* ── Preload all genre backgrounds ── */
   useEffect(() => {
-    if (!autoplay) return;
-    const t = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 5500);
-    return () => clearInterval(t);
-  }, [autoplay]);
-
-  const prev = () => { setAutoplay(false); setCurrent((p) => (p - 1 + slides.length) % slides.length); };
-  const next = () => { setAutoplay(false); setCurrent((p) => (p + 1) % slides.length); };
-  const slide = slides[current];
+    GENRES.forEach(g => { const img = new Image(); img.src = g.bg; });
+  }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden bg-[#F8F7FF]">
-      {/* Background grid pattern */}
-      <div className="absolute inset-0 bg-hero-pattern opacity-50 pointer-events-none" />
-
-      {/* Animated colour blob */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={slide.id}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2 }}
-          className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full pointer-events-none -translate-y-1/4 translate-x-1/4"
-          style={{ background: `radial-gradient(circle, ${slide.accentLight} 0%, transparent 70%)` }}
+    <>
+      {/* ─── Custom glowing cursor ─── */}
+      <div
+        className="fixed pointer-events-none z-[99999]"
+        style={{
+          left: cursor.x,
+          top:  cursor.y,
+          transform: 'translate(-50%, -50%)',
+          opacity: cursor.visible ? 1 : 0,
+          transition: 'opacity 0.2s',
+        }}
+      >
+        <div
+          className="w-5 h-5 rounded-full"
+          style={{
+            background: genre.color,
+            boxShadow: `0 0 18px 4px ${genre.color}70`,
+            mixBlendMode: 'screen',
+          }}
         />
-      </AnimatePresence>
-      <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-indigo-50/80 blur-3xl pointer-events-none" />
+      </div>
 
-      {/* ── Main content ── */}
-      <div className="relative z-10 flex-1 flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 pb-8">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-          {/* Left — text */}
+      <section
+        ref={containerRef}
+        className="relative w-full min-h-screen overflow-hidden flex flex-col"
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={{ cursor: 'none' }}
+      >
+        {/* ══ LAYER 1 — Background image (slowest) ══ */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{ x: bgX, y: bgY, inset: '-10%', width: '120%', height: '120%' }}
+        >
           <AnimatePresence mode="wait">
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-            >
-              <motion.span
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="inline-flex items-center gap-2 text-xs font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-widest"
-                style={{ background: `${slide.accent}15`, color: slide.accent, border: `1px solid ${slide.accent}25` }}
-              >
-                <BookOpen size={12} /> {slide.tag}
-              </motion.span>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="font-display text-5xl sm:text-6xl lg:text-[4.5rem] font-bold text-slate-900 leading-[1.05] mb-6"
-              >
-                {slide.headline[0]}<br />
-                <span style={{ color: slide.accent }}>{slide.headline[1]}</span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-slate-500 text-lg mb-10 leading-relaxed max-w-md"
-              >
-                {slide.subline}
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                <Link
-                  href={slide.ctaLink}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
-                  style={{ background: `linear-gradient(135deg, ${slide.accent}, ${slide.accent}cc)` }}
-                >
-                  {slide.cta} <ArrowRight size={18} />
-                </Link>
-                <Link href="/register" className="btn-secondary text-base">
-                  Join as Writer
-                </Link>
-              </motion.div>
-
-              {/* Slide controls */}
-              <div className="flex items-center gap-4 mt-12">
-                <button onClick={prev} className="w-10 h-10 rounded-xl bg-white shadow-md border border-slate-100 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all">
-                  <ChevronLeft size={18} />
-                </button>
-                <div className="flex gap-2">
-                  {slides.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { setAutoplay(false); setCurrent(i); }}
-                      className="h-2 rounded-full transition-all duration-400"
-                      style={{ width: i === current ? '32px' : '8px', background: i === current ? slide.accent : '#CBD5E1' }}
-                    />
-                  ))}
-                </div>
-                <button onClick={next} className="w-10 h-10 rounded-xl bg-white shadow-md border border-slate-100 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all">
-                  <ChevronRight size={18} />
-                </button>
-              </div>
-            </motion.div>
+            <motion.img
+              key={genre.bg}
+              src={genre.bg}
+              alt=""
+              className="w-full h-full object-cover"
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1,  scale: 1    }}
+              exit={{    opacity: 0              }}
+              transition={{ duration: 1.1, ease: 'easeInOut' }}
+            />
           </AnimatePresence>
+        </motion.div>
 
-          {/* Right — stacked cards (alfoart style) */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative" style={{ width: '260px', height: '520px' }}>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b  from-black/60 via-black/20 to-black/75 pointer-events-none z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-r  from-black/25 via-transparent to-black/25 pointer-events-none z-[1]" />
+        {/* Colour tint that matches active genre */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            className="absolute inset-0 pointer-events-none z-[1]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.08 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            style={{ background: genre.color }}
+          />
+        </AnimatePresence>
+
+        {/* ══ LAYER 2 — Floating particles (medium speed) ══ */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-[2]"
+          style={{ x: ptX, y: ptY }}
+        >
+          {PARTICLES.map(p => (
+            <motion.div
+              key={p.id}
+              className="absolute rounded-full bg-white"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
+              animate={{ y: [0, -50, 0], opacity: [0, p.opacity, 0] }}
+              transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          ))}
+        </motion.div>
+
+        {/* ══ LAYER 3 — Foreground decorative text (fast parallax) ══ */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-[3] hidden lg:block"
+          style={{ x: fgX, y: fgY }}
+        >
+          <p className="absolute top-24 left-24 text-white/10 text-xs tracking-[0.4em] font-semibold uppercase">Est. 2024</p>
+          <p className="absolute top-24 right-10  text-white/10 text-xs tracking-[0.3em] uppercase">Read · Discover · Write</p>
+          <p className="absolute bottom-32 left-24 text-white/8  text-xs tracking-[0.5em] uppercase rotate-90 origin-left">Fable</p>
+        </motion.div>
+
+        {/* ══ LAYER 4 — Left sidebar ══ */}
+        <motion.div
+          className="absolute left-7 top-1/2 -translate-y-1/2 z-[10] hidden lg:flex flex-col items-center gap-4"
+          style={{ x: ptX, y: ptY }}
+        >
+          <p
+            className="text-white/30 text-[10px] tracking-[0.4em] font-medium uppercase"
+            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+          >
+            Your Reading Journey
+          </p>
+          <div className="w-px h-10 bg-white/15 mx-auto" />
+          {['f', '𝕏', 'in', '@'].map((ic, i) => (
+            <a
+              key={i}
+              href="#"
+              className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-white/35 hover:text-white hover:border-white/50 transition-all text-[10px] font-bold"
+            >
+              {ic}
+            </a>
+          ))}
+        </motion.div>
+
+        {/* ══ LAYER 5 — Central content (subtle parallax) ══ */}
+        <motion.div
+          className="relative flex-1 flex flex-col items-center justify-center text-center z-[10] px-6 py-32"
+          style={{ x: txX, y: txY }}
+        >
+          {/* ── Circular genre wheel ── */}
+          <div className="relative mb-6" style={{ width: 300, height: 300 }}>
+
+            {/* Slowly-spinning dashed ring */}
+            <motion.svg
+              viewBox="0 0 300 300"
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+            >
+              <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"   strokeDasharray="3 14" />
+              <circle cx="150" cy="150" r="106" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+            </motion.svg>
+
+            {/* Genre labels — clickable, fixed positions */}
+            {labelPositions.map(({ name, color, x, y, i }) => {
+              const isActive = active === i;
+              return (
+                <motion.button
+                  key={name}
+                  onClick={() => setActive(i)}
+                  whileHover={{ scale: 1.2 }}
+                  className="absolute text-[10px] font-black tracking-[0.2em] uppercase transition-colors duration-300 whitespace-nowrap"
+                  style={{
+                    left: '50%', top: '50%',
+                    transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+                    color: isActive ? color : 'rgba(255,255,255,0.40)',
+                    textShadow: isActive ? `0 0 20px ${color}90` : 'none',
+                  }}
+                >
+                  {name}
+                </motion.button>
+              );
+            })}
+
+            {/* ── Central ornate "F" monogram ── */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <AnimatePresence mode="wait">
-                {slide.stack.map((card, i) => (
-                  <motion.div
-                    key={`${slide.id}-${i}`}
-                    initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                    transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' }}
-                    className="absolute left-0 right-0 overflow-hidden rounded-[28px] shadow-2xl"
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, scale: 0.7, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1,   rotate: 0   }}
+                  exit={{    opacity: 0, scale: 1.2, rotate: 10  }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <span
+                    className="font-display font-black italic leading-none select-none"
                     style={{
-                      top: card.y,
-                      left: card.x,
-                      transform: `rotate(${card.rotate})`,
-                      zIndex: card.z,
-                      height: '320px',
-                      width: '220px',
-                      animation: `float ${4.5 + i * 0.7}s ease-in-out ${i * 0.8}s infinite`,
-                      boxShadow: i === 2
-                        ? `0 8px 32px rgba(0,0,0,0.10)`
-                        : i === 1
-                        ? `0 16px 48px rgba(0,0,0,0.14)`
-                        : `0 24px 60px rgba(0,0,0,0.20)`,
+                      fontSize: 72,
+                      color: genre.color,
+                      textShadow: `0 0 50px ${genre.color}60, 0 0 100px ${genre.color}30`,
                     }}
                   >
-                    <img
-                      src={card.img}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Shine overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
-                    {/* Spine */}
-                    <div className="absolute left-0 top-0 w-2 h-full bg-gradient-to-r from-white/25 to-transparent pointer-events-none" />
-                  </motion.div>
-                ))}
+                    F
+                  </span>
+                </motion.div>
               </AnimatePresence>
+            </div>
+          </div>
 
-              {/* Ghost / transparent card — exactly like the reference */}
+          {/* Micro tagline */}
+          <p className="text-white/40 text-[10px] font-bold tracking-[0.45em] uppercase mb-3">
+            A Digital Library Experience
+          </p>
+
+          {/* Main title */}
+          <h1
+            className="font-display font-black italic text-white leading-none mb-3 select-none"
+            style={{
+              fontSize: 'clamp(52px, 9vw, 96px)',
+              textShadow: '0 4px 40px rgba(0,0,0,0.7)',
+            }}
+          >
+            Fable
+          </h1>
+
+          {/* Genre tagline — changes with active */}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={active}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0  }}
+              exit={{    opacity: 0, y: -12}}
+              transition={{ duration: 0.4 }}
+              className="text-sm font-medium tracking-[0.3em] uppercase mb-8 italic"
+              style={{ color: genre.color, textShadow: `0 0 20px ${genre.color}50` }}
+            >
+              {genre.tagline}
+            </motion.p>
+          </AnimatePresence>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <AnimatePresence mode="wait">
               <motion.div
-                animate={{ opacity: [0.35, 0.55, 0.35] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute rounded-[28px] border-2 border-slate-200/70"
-                style={{
-                  width: '200px',
-                  height: '300px',
-                  top: '130px',
-                  left: '210px',
-                  background: 'rgba(255,255,255,0.5)',
-                  backdropFilter: 'blur(4px)',
-                  zIndex: 0,
-                }}
-              />
+                key={active}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Link
+                  href={`/browse?genre=${genre.name}`}
+                  className="inline-flex items-center gap-2 font-black text-xs tracking-widest uppercase px-8 py-3.5 rounded-full transition-all hover:scale-105"
+                  style={{
+                    background: genre.color,
+                    color: '#0f0e17',
+                    boxShadow: `0 8px 30px ${genre.color}50`,
+                  }}
+                >
+                  Explore {genre.name} <ArrowRight size={13} />
+                </Link>
+              </motion.div>
+            </AnimatePresence>
+            <Link
+              href="/browse"
+              className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-bold px-8 py-3.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur transition-all"
+            >
+              Browse All
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* ══ Stats bar ══ */}
+        <div className="relative z-[15] border-t border-white/10 bg-black/35 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {STATS.map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 + i * 0.1 }}
+                  className="flex items-center gap-2.5"
+                >
+                  <s.icon size={15} className="text-white/35" />
+                  <div>
+                    <p className="text-white font-bold text-base leading-none">{s.value}</p>
+                    <p className="text-white/35 text-xs">{s.label}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Stats bar */}
-      <div className="relative z-10 border-t border-indigo-100/60 bg-white/70 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + i * 0.1 }}
-                className="flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                  <stat.icon size={18} className="text-indigo-500" />
-                </div>
-                <div>
-                  <p className="text-slate-900 font-bold text-lg leading-none">{stat.value}</p>
-                  <p className="text-slate-400 text-xs mt-0.5">{stat.label}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

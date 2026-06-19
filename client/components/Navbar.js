@@ -45,7 +45,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-indigo-50'
           : 'bg-transparent'
@@ -58,8 +58,8 @@ export default function Navbar() {
             <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center group-hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-200">
               <BookOpen size={18} className="text-white" />
             </div>
-            <span className="font-display font-bold text-xl text-slate-900">
-              Fa<span className="text-indigo-500">ble</span>
+            <span className={`font-display font-bold text-xl transition-colors duration-300 ${scrolled ? 'text-slate-900' : 'text-white'}`}>
+              Fa<span className={scrolled ? 'text-indigo-500' : 'text-indigo-300'}>ble</span>
             </span>
           </Link>
 
@@ -71,8 +71,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive(link.href)
-                    ? 'text-indigo-600 bg-indigo-50'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? scrolled ? 'text-indigo-600 bg-indigo-50' : 'text-white bg-white/10'
+                    : scrolled ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {link.label}
@@ -143,7 +143,7 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-4 py-2 rounded-xl hover:bg-slate-50">
+                <Link href="/login" className={`text-sm font-medium transition-colors px-4 py-2 rounded-xl ${scrolled ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' : 'text-white/80 hover:text-white hover:bg-white/10'}`}>
                   Login
                 </Link>
                 <Link href="/register" className="btn-primary text-sm !px-5 !py-2.5 !rounded-xl">

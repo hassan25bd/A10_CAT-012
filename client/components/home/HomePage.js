@@ -17,7 +17,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="bg-[#F8F7FF]">
+    <div>
       <HeroSlider />
 
       {/* Featured Ebooks */}
