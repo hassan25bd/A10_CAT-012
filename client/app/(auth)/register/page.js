@@ -84,21 +84,21 @@ export default function RegisterPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
                   <div className="relative">
-                    <User size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="input-field pl-10" />
+                    <User size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="input-field pl-11" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
                   <div className="relative">
-                    <Mail size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="input-field pl-10" />
+                    <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="input-field pl-11" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
                   <div className="relative">
-                    <Lock size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                     <input type={showPass ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="input-field pl-10 pr-10" />
                     <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                       {showPass ? <EyeOff size={17} /> : <Eye size={17} />}
@@ -108,8 +108,8 @@ export default function RegisterPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Confirm Password</label>
                   <div className="relative">
-                    <Lock size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="password" required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="••••••••" className="input-field pl-10" />
+                    <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                    <input type="password" required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="••••••••" className="input-field pl-11" />
                   </div>
                 </div>
                 <button type="submit" className="btn-primary w-full">Continue →</button>

@@ -62,12 +62,12 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
               <div className="relative">
-                <Mail size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type="email" required value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="input-field pl-10"
+                  className="input-field pl-11"
                 />
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
               <div className="relative">
-                <Lock size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type={showPass ? 'text' : 'password'} required value={password}
                   onChange={(e) => setPassword(e.target.value)}
