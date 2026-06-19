@@ -86,13 +86,30 @@ router.post('/fix', async (req, res) => {
     }
     if (toDelete.length) await Ebook.deleteMany({ _id: { $in: toDelete } });
 
-    // Fix broken/missing cover images
+    // Fix ALL broken/duplicate cover images — each title gets a unique, genre-appropriate photo
     const fixes = [
-      { title: 'Crown of Shadows',   img: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80' },
-      { title: "The Dragon's Keep",  img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80' },
-      { title: "The Mage's Bargain", img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
-      { title: 'The Summer Villa',   img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&q=80' },
-      { title: 'When We First Met',  img: 'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=400&q=80' },
+      // Blank / broken
+      { title: 'Dead Letters',         img: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80' }, // handwritten letters
+      // Duplicate: clown horror image reused on mystery books
+      { title: 'The Vanishing Hour',   img: 'https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=400&q=80' }, // foggy night road
+      // Duplicate: romance hero bg reused on book
+      { title: 'When We First Met',    img: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&q=80' }, // romantic dinner
+      // Duplicate: sci-fi bg reused on book
+      { title: 'The Quantum Garden',   img: 'https://images.unsplash.com/photo-1488841714725-bb4c32d1ac94?w=400&q=80' }, // exotic alien plants
+      // Duplicate: Midnight Garden fantasy image reused on dragon book
+      { title: "The Dragon's Keep",    img: 'https://images.unsplash.com/photo-1501084817266-d5a88b0b9e0e?w=400&q=80' }, // dark fantasy landscape
+      // Duplicate: horror bg reused on book
+      { title: 'The Hollow House',     img: 'https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?w=400&q=80' }, // dark empty corridor
+      // Duplicate: Echoes of Istanbul history image reused
+      { title: 'Silk Road Chronicles', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80' },   // colorful spice market
+      // Duplicate: Code of Silence thriller image reused
+      { title: 'The Final Witness',    img: 'https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?w=400&q=80' }, // dark political scene
+      // Duplicate: adventure bg reused on book
+      { title: 'The Lost Expedition',  img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80' }, // snowy Patagonia
+      // Previously identified fixes (keep them)
+      { title: 'Crown of Shadows',     img: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80' },
+      { title: "The Mage's Bargain",   img: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=400&q=80' },
+      { title: 'The Summer Villa',     img: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80' },
     ];
     let fixed = 0;
     for (const f of fixes) {
