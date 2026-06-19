@@ -68,6 +68,7 @@ router.get('/featured', async (req, res) => {
 // GET /api/ebooks/top-writers  — 3 writers with most sales
 router.get('/top-writers', async (req, res) => {
   try {
+    const User = require('../models/User');
     const result = await Transaction.aggregate([
       { $match: { type: 'purchase', status: 'completed' } },
       { $lookup: { from: 'ebooks', localField: 'ebook', foreignField: '_id', as: 'ebookData' } },
@@ -76,10 +77,9 @@ router.get('/top-writers', async (req, res) => {
       { $sort: { sales: -1 } },
       { $limit: 3 },
     ]);
-    const { default: User } = await import('../models/User.js').catch(() => ({ default: require('../models/User') }));
     const writers = await Promise.all(
       result.map(async (r) => {
-        const writer = await require('../models/User').findById(r._id).select('name avatar email');
+        const writer = await User.findById(r._id).select('name avatar email');
         return { writer, sales: r.sales };
       })
     );
