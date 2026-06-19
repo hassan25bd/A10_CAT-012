@@ -5,6 +5,17 @@ const User = require('../models/User');
 const Ebook = require('../models/Ebook');
 const Transaction = require('../models/Transaction');
 
+// GET /api/seed/debug — check env vars
+router.get('/debug', (req, res) => {
+  const uri = process.env.MONGODB_URI || '';
+  res.json({
+    uri_length: uri.length,
+    uri_start: uri.substring(0, 20),
+    has_plus_srv: uri.includes('+srv'),
+    node_env: process.env.NODE_ENV,
+  });
+});
+
 // POST /api/seed  — one-time seed, delete this route after seeding
 router.post('/', async (req, res) => {
   try {
