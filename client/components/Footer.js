@@ -47,9 +47,9 @@ export default function Footer() {
               {[
                 { label: 'Home', href: '/' },
                 { label: 'Browse Ebooks', href: '/browse' },
-                { label: 'About Us', href: '#' },
-                { label: 'Contact', href: '#' },
-                { label: 'Privacy Policy', href: '#' },
+                { label: 'About Us', href: '/about' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Privacy Policy', href: '/privacy' },
               ].map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-400 hover:text-indigo-400 text-sm transition-colors font-medium">
@@ -96,9 +96,9 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Fable. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">Privacy Policy</a>
-            <a href="#" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">Terms of Service</a>
-            <a href="#" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">Cookie Policy</a>
+            <Link href="/privacy" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">Privacy Policy</Link>
+            <Link href="/contact" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">Contact Us</Link>
+            <Link href="/about" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">About</Link>
           </div>
         </div>
       </div>
