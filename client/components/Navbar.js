@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { Menu, X, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import toast from 'react-hot-toast';
@@ -108,6 +108,9 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
@@ -144,6 +147,14 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
+      {/* Scroll progress bar */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left pointer-events-none"
+        style={{
+          scaleX,
+          background: 'linear-gradient(90deg,#6366f1,#a855f7,#ec4899)',
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

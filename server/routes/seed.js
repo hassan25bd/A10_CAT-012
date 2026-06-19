@@ -292,4 +292,33 @@ router.post('/fix4', async (req, res) => {
   }
 });
 
+// POST /api/seed/fix5 — fix mystery book images with real verified mystery photos
+router.post('/fix5', async (req, res) => {
+  try {
+    const secret = req.headers['x-seed-secret'];
+    if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
+
+    const fixes = [
+      // Dark mystery woman with candle+book — from Unsplash "mystery detective dark" search
+      { title: 'Dead Letters',
+        img: 'https://images.unsplash.com/photo-1708101698991-b4be1bb95706?w=400&q=80' },
+      // Dark twilight road at dusk — perfect for "disappearances at 3am" theme
+      { title: 'The Vanishing Hour',
+        img: 'https://images.unsplash.com/photo-1563818072824-ed3d6ff52955?w=400&q=80' },
+      // Dark vintage moody interior room — for sinister family home "The Blue Room"
+      { title: 'The Blue Room',
+        img: 'https://images.unsplash.com/photo-1720273238003-079301a7e9b1?w=400&q=80' },
+    ];
+
+    let fixed = 0;
+    for (const f of fixes) {
+      const r = await Ebook.updateOne({ title: f.title }, { $set: { coverImage: f.img } });
+      if (r.modifiedCount) fixed++;
+    }
+    res.json({ message: '✅ Fix5 done!', imagesFixed: fixed });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
