@@ -244,26 +244,45 @@ export default function HeroSlider() {
               );
             })}
 
-            {/* ── Central ornate "F" monogram ── */}
+            {/* ── Central premium badge ── */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}
-                  initial={{ opacity: 0, scale: 0.7, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1,   rotate: 0   }}
-                  exit={{    opacity: 0, scale: 1.2, rotate: 10  }}
+                  initial={{ opacity: 0, scale: 0.75, rotate: -8 }}
+                  animate={{ opacity: 1, scale: 1,    rotate: 0  }}
+                  exit={{    opacity: 0, scale: 1.15, rotate: 8  }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="relative"
                 >
-                  <span
-                    className="font-display font-black italic leading-none select-none"
+                  {/* Outer glow pulse */}
+                  <motion.div
+                    animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.15, 0.5] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute -inset-4 rounded-[22px]"
+                    style={{ background: genre.color, filter: 'blur(16px)' }}
+                  />
+                  {/* Badge */}
+                  <div
+                    className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden"
                     style={{
-                      fontSize: 80,
-                      color: genre.color,
-                      textShadow: `0 0 50px ${genre.color}60, 0 0 100px ${genre.color}30`,
+                      background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
+                      boxShadow: `0 8px 32px rgba(79,70,229,0.6), 0 0 0 1px rgba(255,255,255,0.1) inset`,
+                      border: `2px solid ${genre.color}50`,
                     }}
                   >
-                    F
-                  </span>
+                    <div className="absolute top-0 inset-x-0 h-10 rounded-t-[20px]"
+                      style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%)' }} />
+                    <svg width="42" height="42" viewBox="0 0 21 21" fill="none">
+                      <rect x="3.5" y="2.5"  width="4"    height="16"  rx="1.8" fill="white"/>
+                      <rect x="3.5" y="2.5"  width="14"   height="4"   rx="1.8" fill="white"/>
+                      <rect x="3.5" y="11"   width="9.5"  height="3.2" rx="1.5" fill="rgba(255,255,255,0.82)"/>
+                      <rect x="5"   y="19.2" width="8"    height="1.2" rx="0.6" fill="rgba(255,255,255,0.22)"/>
+                      <rect x="5.5" y="17.8" width="6.5"  height="1"   rx="0.5" fill="rgba(255,255,255,0.14)"/>
+                    </svg>
+                    <div className="absolute bottom-0 inset-x-0 h-8"
+                      style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.3) 0%,transparent 100%)' }} />
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>

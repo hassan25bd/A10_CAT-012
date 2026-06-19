@@ -3,9 +3,102 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Menu, X, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import toast from 'react-hot-toast';
+
+function FableLogo({ scrolled }) {
+  return (
+    <Link href="/" className="flex items-center gap-3 group select-none">
+      {/* ── Mark ── */}
+      <div className="relative flex-shrink-0">
+        {/* Animated glow ring — shows on hover */}
+        <motion.div
+          className="absolute -inset-1.5 rounded-[15px] pointer-events-none"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          style={{
+            background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)',
+            filter: 'blur(10px)',
+          }}
+        />
+
+        {/* Badge body */}
+        <motion.div
+          whileHover={{ scale: 1.07, rotate: -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+          className="relative w-10 h-10 rounded-[11px] flex items-center justify-center overflow-hidden"
+          style={{
+            background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
+            boxShadow: '0 2px 12px rgba(79,70,229,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
+          }}
+        >
+          {/* Top specular highlight */}
+          <div
+            className="absolute top-0 inset-x-0 h-5 rounded-t-[11px] pointer-events-none"
+            style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.14) 0%,transparent 100%)' }}
+          />
+          {/* Corner sparkle */}
+          <div
+            className="absolute top-0 left-0 w-5 h-5 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at 0% 0%,rgba(255,255,255,0.22) 0%,transparent 70%)' }}
+          />
+
+          {/* Geometric F — left stroke = book spine, bars = open pages */}
+          <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+            {/* Spine / vertical stroke */}
+            <rect x="3.5" y="2.5" width="4"  height="16" rx="1.8" fill="white"/>
+            {/* Top bar — full width, top page */}
+            <rect x="3.5" y="2.5" width="14" height="4"  rx="1.8" fill="white"/>
+            {/* Mid bar — shorter, middle pages */}
+            <rect x="3.5" y="11" width="9.5" height="3.2" rx="1.5" fill="rgba(255,255,255,0.80)"/>
+            {/* Page-fan hints at bottom */}
+            <rect x="5"   y="19.2" width="8" height="1.2" rx="0.6" fill="rgba(255,255,255,0.22)"/>
+            <rect x="5.5" y="17.8" width="6.5" height="1" rx="0.5" fill="rgba(255,255,255,0.14)"/>
+          </svg>
+
+          {/* Bottom shadow vignette */}
+          <div
+            className="absolute bottom-0 inset-x-0 h-4 pointer-events-none"
+            style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.25) 0%,transparent 100%)' }}
+          />
+        </motion.div>
+      </div>
+
+      {/* ── Wordmark ── */}
+      <div className="flex flex-col justify-center leading-none">
+        <span
+          className="font-display font-bold tracking-tight transition-all duration-300"
+          style={{
+            fontSize: 21,
+            ...(scrolled
+              ? {
+                  background: 'linear-gradient(135deg,#3730a3,#6366f1,#7c3aed)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }
+              : {
+                  color: '#ffffff',
+                  textShadow: '0 0 28px rgba(255,255,255,0.28)',
+                }),
+          }}
+        >
+          Fable
+        </span>
+        <span
+          className="font-medium tracking-[0.28em] uppercase transition-colors duration-300"
+          style={{
+            fontSize: 8,
+            color: scrolled ? 'rgba(99,102,241,0.6)' : 'rgba(255,255,255,0.38)',
+            letterSpacing: '0.3em',
+          }}
+        >
+          Library
+        </span>
+      </div>
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,14 +147,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center group-hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-200">
-              <BookOpen size={18} className="text-white" />
-            </div>
-            <span className={`font-display font-bold text-xl transition-colors duration-300 ${scrolled ? 'text-slate-900' : 'text-white'}`}>
-              Fa<span className={scrolled ? 'text-indigo-500' : 'text-indigo-300'}>ble</span>
-            </span>
-          </Link>
+          <FableLogo scrolled={scrolled} />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
