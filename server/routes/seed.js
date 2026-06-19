@@ -230,4 +230,34 @@ router.post('/fix2', async (req, res) => {
   }
 });
 
+// POST /api/seed/fix3 — replace still-wrong mystery / fantasy images
+router.post('/fix3', async (req, res) => {
+  try {
+    const secret = req.headers['x-seed-secret'];
+    if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
+
+    const fixes = [
+      // Mystery books — confirmed 200, dark/atmospheric IDs
+      { title: 'The Vanishing Hour',
+        img: 'https://images.unsplash.com/photo-1477233534935-f5e6fe7c1159?w=400&q=80' },
+      { title: 'Dead Letters',
+        img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
+      { title: 'The Blue Room',
+        img: 'https://images.unsplash.com/photo-1494059980473-813e73ee784b?w=400&q=80' },
+      // Fantasy — dark castle/atmospheric
+      { title: "The Dragon's Keep",
+        img: 'https://images.unsplash.com/photo-1553481187-be93c21490a9?w=400&q=80' },
+    ];
+
+    let fixed = 0;
+    for (const f of fixes) {
+      const r = await Ebook.updateOne({ title: f.title }, { $set: { coverImage: f.img } });
+      if (r.modifiedCount) fixed++;
+    }
+    res.json({ message: '✅ Fix3 done!', imagesFixed: fixed });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
