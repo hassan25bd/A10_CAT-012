@@ -1,6 +1,6 @@
 'use client';
-import { useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const GENRE_CONFIG = {
   All:        { emoji: '✦',  color: '#818cf8', from: '#6366f1', to: '#8b5cf6' },
@@ -20,7 +20,34 @@ const GENRE_CONFIG = {
 
 export default function GenreStrip({ genres, active = '', onChange }) {
   const allGenres = ['', ...genres];
-  const scrollRef = useRef(null);
+  const scrollRef  = useRef(null);
+  const dragging   = useRef(false);
+  const startX     = useRef(0);
+  const scrollLeft = useRef(0);
+  const moved      = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const onMouseDown = (e) => {
+    dragging.current   = true;
+    moved.current      = false;
+    startX.current     = e.pageX - scrollRef.current.offsetLeft;
+    scrollLeft.current = scrollRef.current.scrollLeft;
+    setIsDragging(true);
+  };
+  const onMouseMove = (e) => {
+    if (!dragging.current) return;
+    e.preventDefault();
+    const x    = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.6;
+    if (Math.abs(walk) > 4) moved.current = true;
+    scrollRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+  const onMouseUp = () => { dragging.current = false; setIsDragging(false); };
+
+  const handleClick = (e, fn) => {
+    if (moved.current) { e.preventDefault(); e.stopPropagation(); return; }
+    fn();
+  };
 
   return (
     <div
@@ -38,8 +65,17 @@ export default function GenreStrip({ genres, active = '', onChange }) {
 
       <div
         ref={scrollRef}
-        className="flex gap-2 overflow-x-auto py-3.5 px-6 max-w-7xl mx-auto"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex gap-2 overflow-x-auto py-3.5 px-6 max-w-7xl mx-auto select-none"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: 'none',
+        }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
       >
         {allGenres.map((g, i) => {
           const label    = g || 'All';
@@ -54,7 +90,7 @@ export default function GenreStrip({ genres, active = '', onChange }) {
               transition={{ delay: i * 0.025, duration: 0.22 }}
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onChange(g)}
+              onClick={(e) => handleClick(e, () => onChange(g))}
               className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold whitespace-nowrap flex-shrink-0 overflow-hidden transition-colors duration-200 select-none"
               style={{
                 background: isActive
