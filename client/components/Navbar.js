@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Menu, X, LogOut, User, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { BookOpen, Menu, X, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -40,24 +40,26 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/browse', label: 'Browse Ebooks' },
+    { href: '/browse', label: 'Browse' },
   ];
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-dark-900/95 backdrop-blur-xl shadow-lg shadow-primary-600/10' : 'bg-transparent'
+        scrolled
+          ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-indigo-50'
+          : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center group-hover:bg-primary-500 transition-colors">
-              <BookOpen size={20} className="text-white" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center group-hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-200">
+              <BookOpen size={18} className="text-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white">
-              Fa<span className="text-primary-400">ble</span>
+            <span className="font-display font-bold text-xl text-slate-900">
+              Fa<span className="text-indigo-500">ble</span>
             </span>
           </Link>
 
@@ -67,10 +69,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive(link.href)
-                    ? 'text-primary-300 bg-primary-600/10'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    ? 'text-indigo-600 bg-indigo-50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {link.label}
@@ -79,10 +81,10 @@ export default function Navbar() {
             {user && (
               <Link
                 href={getDashboardLink()}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive('/dashboard')
-                    ? 'text-primary-300 bg-primary-600/10'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    ? 'text-indigo-600 bg-indigo-50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 Dashboard
@@ -96,41 +98,42 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 border border-gray-700 transition-all"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 transition-all shadow-sm"
                 >
-                  <div className="w-7 h-7 rounded-full bg-primary-600 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                  <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 overflow-hidden">
                     {user.avatar ? (
                       <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       user.name?.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <span className="text-sm text-gray-200 max-w-24 truncate">{user.name}</span>
-                  <ChevronDown size={14} className={`text-gray-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <span className="text-sm text-slate-700 font-medium max-w-24 truncate">{user.name}</span>
+                  <ChevronDown size={14} className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
                   {dropdownOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="absolute right-0 mt-2 w-48 glass rounded-xl shadow-xl shadow-black/30 py-1 z-50"
+                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl shadow-slate-200/80 border border-slate-100 py-1.5 z-50"
                     >
-                      <div className="px-4 py-2 border-b border-gray-700/50 mb-1">
-                        <p className="text-xs text-gray-400 capitalize">{user.role}</p>
-                        <p className="text-sm text-white font-medium truncate">{user.email}</p>
+                      <div className="px-4 py-2.5 border-b border-slate-100 mb-1">
+                        <p className="text-xs text-slate-400 capitalize font-medium">{user.role}</p>
+                        <p className="text-sm text-slate-800 font-semibold truncate">{user.email}</p>
                       </div>
                       <Link
                         href={getDashboardLink()}
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-primary-600/20 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                       >
                         <LayoutDashboard size={15} /> Dashboard
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
                       >
                         <LogOut size={15} /> Logout
                       </button>
@@ -140,18 +143,18 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-medium text-gray-300 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/5">
+                <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-4 py-2 rounded-xl hover:bg-slate-50">
                   Login
                 </Link>
-                <Link href="/register" className="btn-primary text-sm !px-5 !py-2">
-                  Get Started
+                <Link href="/register" className="btn-primary text-sm !px-5 !py-2.5 !rounded-xl">
+                  <Sparkles size={15} /> Get Started
                 </Link>
               </>
             )}
           </div>
 
           {/* Mobile menu btn */}
-          <button className="md:hidden p-2 text-gray-300 hover:text-white" onClick={() => setMenuOpen(!menuOpen)}>
+          <button className="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -164,7 +167,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-dark-800/98 backdrop-blur-xl border-t border-gray-700/50"
+            className="md:hidden bg-white/98 backdrop-blur-xl border-t border-slate-100 shadow-lg"
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -173,7 +176,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive(link.href) ? 'text-primary-300 bg-primary-600/15' : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    isActive(link.href) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   {link.label}
@@ -181,15 +184,15 @@ export default function Navbar() {
               ))}
               {user ? (
                 <>
-                  <Link href={getDashboardLink()} onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-2">
+                  <Link href={getDashboardLink()} onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 flex items-center gap-2">
                     <LayoutDashboard size={16} /> Dashboard
                   </Link>
-                  <button onClick={handleLogout} className="px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 flex items-center gap-2 text-left">
+                  <button onClick={handleLogout} className="px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 flex items-center gap-2 text-left">
                     <LogOut size={16} /> Logout
                   </button>
                 </>
               ) : (
-                <div className="flex flex-col gap-2 pt-2 border-t border-gray-700/50 mt-2">
+                <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 mt-2">
                   <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-secondary text-center text-sm">Login</Link>
                   <Link href="/register" onClick={() => setMenuOpen(false)} className="btn-primary text-center text-sm">Get Started</Link>
                 </div>

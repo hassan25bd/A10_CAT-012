@@ -31,34 +31,47 @@ export default function LoadingScreen() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[9999] bg-white flex items-center justify-center"
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          style={{ background: '#F8F7FF' }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
+          transition={{ duration: 0.7, ease: 'easeInOut' }}
         >
-          <div className="flex flex-col items-center gap-4">
+          {/* Ambient glow */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+            style={{
+              background: `radial-gradient(circle, rgba(99,102,241,${progress / 400}) 0%, transparent 70%)`,
+            }}
+          />
+
+          <div className="flex flex-col items-center gap-5 relative z-10">
             {/* Logo wipe effect */}
             <div className="relative select-none">
-              {/* Ghost (unfilled) text */}
               <span
-                className="block text-[96px] font-black leading-none tracking-tight"
+                className="block font-black leading-none tracking-tight"
                 style={{
                   fontFamily: "'Playfair Display', serif",
-                  color: '#d1d5db',
+                  fontSize: 'clamp(64px, 12vw, 108px)',
+                  color: '#E0E7FF',
                 }}
               >
                 Fable
               </span>
 
-              {/* Filled text clipped to progress width */}
+              {/* Filled — indigo to violet gradient wipe */}
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{ width: `${progress}%` }}
               >
                 <span
-                  className="block text-[96px] font-black leading-none tracking-tight whitespace-nowrap"
+                  className="block font-black leading-none tracking-tight whitespace-nowrap"
                   style={{
                     fontFamily: "'Playfair Display', serif",
-                    color: '#111827',
+                    fontSize: 'clamp(64px, 12vw, 108px)',
+                    background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
                   }}
                 >
                   Fable
@@ -66,10 +79,21 @@ export default function LoadingScreen() {
               </div>
             </div>
 
+            {/* Progress bar */}
+            <div className="w-32 h-1 bg-indigo-100 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-none"
+                style={{
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #6366F1, #8B5CF6)',
+                }}
+              />
+            </div>
+
             {/* Percentage */}
             <span
-              className="text-sm font-semibold tracking-widest"
-              style={{ color: '#6b7280', fontFamily: "'Inter', sans-serif" }}
+              className="text-xs font-bold tracking-widest uppercase"
+              style={{ color: '#A5B4FC', fontFamily: "'Inter', sans-serif" }}
             >
               {progress}%
             </span>
