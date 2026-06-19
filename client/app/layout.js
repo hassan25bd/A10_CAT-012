@@ -2,6 +2,7 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '../lib/AuthContext';
 import QueryProvider from '../components/QueryProvider';
+import LoadingScreen from '../components/LoadingScreen';
 
 export const metadata = {
   title: 'Fable – Discover & Read Original Ebooks',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
       <body>
         <QueryProvider>
           <AuthProvider>
+            <LoadingScreen />
             {children}
             <Toaster
               position="top-right"
