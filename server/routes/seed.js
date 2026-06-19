@@ -247,6 +247,9 @@ router.post('/fix3', async (req, res) => {
       // Fantasy — dark castle/atmospheric
       { title: "The Dragon's Keep",
         img: 'https://images.unsplash.com/photo-1553481187-be93c21490a9?w=400&q=80' },
+      // Sci-Fi Quantum Garden — galaxy/nebula (beach was wrong)
+      { title: 'The Quantum Garden',
+        img: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&q=80' },
     ];
 
     let fixed = 0;
