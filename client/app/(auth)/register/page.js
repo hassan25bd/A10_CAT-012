@@ -51,7 +51,7 @@ export default function RegisterPage() {
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
               <BookOpen size={22} className="text-white" />
             </div>
@@ -168,7 +168,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="mt-6">
-          <div className="relative mb-4">
+          <div className="relative mb-5">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-700/60" />
             </div>
