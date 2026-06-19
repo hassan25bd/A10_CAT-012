@@ -22,8 +22,10 @@ export default function RegisterPage() {
 
   const handleStep1 = (e) => {
     e.preventDefault();
-    if (password !== confirmPass) { toast.error('Passwords do not match'); return; }
+    if (!name.trim()) { toast.error('Please enter your name'); return; }
+    if (!email.trim()) { toast.error('Please enter your email'); return; }
     if (password.length < 6) { toast.error('Password must be at least 6 characters'); return; }
+    if (password !== confirmPass) { toast.error('Passwords do not match'); return; }
     setStep(2);
   };
 
@@ -42,33 +44,88 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4 py-12">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -right-20 w-72 h-72 rounded-full bg-primary-600/10 blur-3xl" />
-        <div className="absolute bottom-1/4 -left-20 w-96 h-96 rounded-full bg-purple-700/10 blur-3xl" />
-      </div>
-
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+    <div className="min-h-screen flex">
+      {/* Left — illustration panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-primary-900 via-purple-900 to-dark-900">
+        <img
+          src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&q=80"
+          alt="Books"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/80 via-purple-900/60 to-dark-900/80" />
+        <div className="relative z-10 flex flex-col justify-between p-12 w-full">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
               <BookOpen size={22} className="text-white" />
             </div>
-            <span className="font-display font-bold text-2xl text-white">Fa<span className="text-primary-400">ble</span></span>
+            <span className="font-display font-bold text-2xl text-white">Fa<span className="text-primary-300">ble</span></span>
           </Link>
-          <h1 className="font-display text-2xl font-bold text-white">Create your account</h1>
-          <p className="text-gray-400 text-sm mt-1">Join thousands of readers and writers</p>
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="font-display text-4xl font-bold text-white leading-tight mb-4"
+            >
+              Join a world of<br />stories & ideas.
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="text-gray-300 text-lg"
+            >
+              Read, write, and share ebooks with a growing community of passionate readers.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="grid grid-cols-1 gap-4 mt-10"
+            >
+              {[
+                { icon: '📚', text: 'Access thousands of ebooks across all genres' },
+                { icon: '✍️', text: 'Publish your own stories and earn from your work' },
+                { icon: '🔖', text: 'Bookmark favorites and track your reading' },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-3">
+                  <span className="text-xl">{item.icon}</span>
+                  <p className="text-gray-300 text-sm">{item.text}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+          <p className="text-gray-500 text-sm">© 2024 Fable. All rights reserved.</p>
         </div>
+      </div>
 
-        {/* Step indicator */}
-        <div className="flex items-center gap-3 mb-6">
-          {[1, 2].map((s) => (
-            <div key={s} className={`flex-1 h-1.5 rounded-full transition-all duration-300 ${s <= step ? 'bg-primary-600' : 'bg-gray-700'}`} />
-          ))}
-        </div>
+      {/* Right — form panel */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-dark-900 px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-md"
+        >
+          {/* Mobile logo */}
+          <div className="lg:hidden text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+                <BookOpen size={22} className="text-white" />
+              </div>
+              <span className="font-display font-bold text-2xl text-white">Fa<span className="text-primary-400">ble</span></span>
+            </Link>
+          </div>
 
-        <div className="glass rounded-2xl p-8 border border-gray-700/50">
+          <h1 className="font-display text-3xl font-bold text-white mb-1">Create your account</h1>
+          <p className="text-gray-400 mb-6">Join thousands of readers and writers</p>
+
+          {/* Step indicator */}
+          <div className="flex items-center gap-2 mb-7">
+            {[1, 2].map((s) => (
+              <div key={s} className={`flex-1 h-1.5 rounded-full transition-all duration-300 ${s <= step ? 'bg-primary-600' : 'bg-gray-700'}`} />
+            ))}
+          </div>
+
           <AnimatePresence mode="wait">
             {step === 1 ? (
               <motion.form
@@ -80,27 +137,27 @@ export default function RegisterPage() {
                 noValidate
                 className="space-y-5"
               >
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-4">Step 1 — Your Details</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Step 1 — Your Details</p>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
                   <div className="relative">
                     <User size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="input-field pl-11" />
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="input-field pl-11" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
                   <div className="relative">
                     <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="input-field pl-11" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="input-field pl-11" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
                   <div className="relative">
                     <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type={showPass ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="input-field pl-10 pr-10" />
-                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    <input type={showPass ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="input-field pl-11 pr-11" />
+                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                       {showPass ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
                   </div>
@@ -109,7 +166,7 @@ export default function RegisterPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">Confirm Password</label>
                   <div className="relative">
                     <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <input type="password" required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="••••••••" className="input-field pl-11" />
+                    <input type="password" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="••••••••" className="input-field pl-11" />
                   </div>
                 </div>
                 <button type="submit" className="btn-primary w-full">Continue →</button>
@@ -122,9 +179,8 @@ export default function RegisterPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-4">Step 2 — Choose Your Role</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Step 2 — Choose Your Role</p>
                 <p className="text-gray-300 text-sm">How will you primarily use Fable?</p>
-
                 <div className="grid grid-cols-1 gap-4">
                   {[
                     { value: 'user', icon: UserCheck, label: 'Reader', desc: 'Browse, discover, and purchase ebooks from talented writers.' },
@@ -134,11 +190,7 @@ export default function RegisterPage() {
                       key={opt.value}
                       type="button"
                       onClick={() => setRole(opt.value)}
-                      className={`text-left p-5 rounded-xl border-2 transition-all duration-200 ${
-                        role === opt.value
-                          ? 'border-primary-500 bg-primary-600/15'
-                          : 'border-gray-700 hover:border-gray-500 bg-dark-700'
-                      }`}
+                      className={`text-left p-5 rounded-xl border-2 transition-all duration-200 ${role === opt.value ? 'border-primary-500 bg-primary-600/15' : 'border-gray-700 hover:border-gray-500 bg-dark-700'}`}
                     >
                       <div className="flex items-start gap-3">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${role === opt.value ? 'bg-primary-600/30' : 'bg-dark-600'}`}>
@@ -155,7 +207,6 @@ export default function RegisterPage() {
                     </button>
                   ))}
                 </div>
-
                 <div className="flex gap-3">
                   <button onClick={() => setStep(1)} className="btn-secondary flex-1">← Back</button>
                   <button onClick={handleSubmit} disabled={loading} className="btn-primary flex-1">
@@ -165,25 +216,24 @@ export default function RegisterPage() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        <div className="mt-6">
-          <div className="relative mb-5">
+          <div className="relative my-7">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-700/60" />
             </div>
             <div className="relative flex justify-center text-xs text-gray-500">
-              <span className="px-3 bg-dark-900 rounded">or sign up with Google</span>
+              <span className="px-3 bg-dark-900">Or sign up with Google</span>
             </div>
           </div>
-          <GoogleLoginButton role={role} />
-        </div>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
-          Already have an account?{' '}
-          <Link href="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">Sign in</Link>
-        </p>
-      </motion.div>
+          <GoogleLoginButton role={role} />
+
+          <p className="text-center text-sm text-gray-400 mt-6">
+            Already have an account?{' '}
+            <Link href="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">Sign in</Link>
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 }
