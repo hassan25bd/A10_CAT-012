@@ -28,7 +28,7 @@ export default function GoogleLoginButton({ role = 'user', label = 'Continue wit
   const initGoogle = () => {
     if (!window.google || !btnRef.current) return;
     window.google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '219316083151-fo7f8devpdst1vhobhflmljqfk5fo5r1.apps.googleusercontent.com',
       callback: handleCredential,
     });
     window.google.accounts.id.renderButton(btnRef.current, {
