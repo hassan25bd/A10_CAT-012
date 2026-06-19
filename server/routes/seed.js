@@ -263,22 +263,22 @@ router.post('/fix3', async (req, res) => {
   }
 });
 
-// POST /api/seed/fix4 — fix horror book cover images
+// POST /api/seed/fix4 — fix horror book cover images with REAL verified horror photos
 router.post('/fix4', async (req, res) => {
   try {
     const secret = req.headers['x-seed-secret'];
     if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
 
     const fixes = [
-      // Horror — The Hollow House (cactus was VERY wrong)
+      // Real haunted house: foggy forest cottage — from Unsplash "haunted house" search
       { title: 'The Hollow House',
-        img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&q=80' },
-      // Horror — Dark Waters (tropical beach was wrong for deep sea horror)
+        img: 'https://images.unsplash.com/photo-1494376877685-d3d2559d4f82?w=400&q=80' },
+      // Real dark sea: moody grey-black ocean — from Unsplash "dark ocean horror" search
       { title: 'Dark Waters',
-        img: 'https://images.unsplash.com/photo-1542315192-1f61a1792f33?w=400&q=80' },
-      // Horror — The Visitor (movie theater — going for more atmospheric)
+        img: 'https://images.unsplash.com/photo-1594289765464-d4d8b4dcf42d?w=400&q=80' },
+      // Real ghost statues in darkness — from Unsplash "ghost horror" search
       { title: 'The Visitor',
-        img: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=400&q=80' },
+        img: 'https://images.unsplash.com/photo-1698347188591-ee0181b4cc1d?w=400&q=80' },
     ];
 
     let fixed = 0;
