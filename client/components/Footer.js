@@ -72,11 +72,10 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4">Get the latest ebooks and author updates delivered to your inbox.</p>
             <div className="flex gap-2">
               <div className="flex-1 relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type="email"
                   placeholder="your@email.com"
-                  className="w-full bg-dark-700 border border-gray-700 text-white placeholder-gray-500 rounded-xl pl-10 pr-3 py-2.5 text-sm outline-none focus:border-primary-500 transition-colors"
+                  className="w-full bg-dark-700 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 transition-colors"
                 />
               </div>
               <button className="bg-primary-600 hover:bg-primary-700 text-white p-2.5 rounded-xl transition-colors">

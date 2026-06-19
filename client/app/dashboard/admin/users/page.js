@@ -43,11 +43,10 @@ export default function AdminUsersPage() {
 
         <div className="glass rounded-2xl border border-gray-700/50 p-6">
           <div className="relative mb-6">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or email..."
-              className="w-full max-w-sm input-field pl-11"
+              className="w-full max-w-sm input-field"
             />
           </div>
 
