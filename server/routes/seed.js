@@ -60,6 +60,55 @@ router.post('/', async (req, res) => {
   }
 });
 
+// POST /api/seed/fix — remove duplicates and fix broken images
+router.post('/fix', async (req, res) => {
+  try {
+    const secret = req.headers['x-seed-secret'];
+    if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
+
+    // Remove duplicates — keep only the one with highest salesCount per title
+    const all = await Ebook.find({}).lean();
+    const seen = {};
+    const toDelete = [];
+    for (const eb of all) {
+      const key = eb.title.toLowerCase().trim();
+      if (seen[key]) {
+        // Keep the one with higher salesCount, delete the other
+        if ((eb.salesCount || 0) >= (seen[key].salesCount || 0)) {
+          toDelete.push(seen[key]._id);
+          seen[key] = eb;
+        } else {
+          toDelete.push(eb._id);
+        }
+      } else {
+        seen[key] = eb;
+      }
+    }
+    if (toDelete.length) await Ebook.deleteMany({ _id: { $in: toDelete } });
+
+    // Fix broken/missing cover images
+    const fixes = [
+      { title: 'Crown of Shadows',   img: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80' },
+      { title: "The Dragon's Keep",  img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80' },
+      { title: "The Mage's Bargain", img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
+      { title: 'The Summer Villa',   img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&q=80' },
+      { title: 'When We First Met',  img: 'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=400&q=80' },
+    ];
+    let fixed = 0;
+    for (const f of fixes) {
+      const updated = await Ebook.updateOne(
+        { title: f.title },
+        { $set: { coverImage: f.img } }
+      );
+      if (updated.modifiedCount) fixed++;
+    }
+
+    res.json({ message: '✅ Fixed!', duplicatesRemoved: toDelete.length, imagesFixed: fixed });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // POST /api/seed/more-ebooks — add 30 more ebooks to existing writers
 router.post('/more-ebooks', async (req, res) => {
   try {
