@@ -108,13 +108,12 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
               <div className="relative">
-                <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="input-field pl-11"
+                  className="input-field"
                 />
               </div>
             </div>
@@ -124,13 +123,12 @@ export default function LoginPage() {
                 <Link href="/forgot-password" className="text-xs text-primary-400 hover:text-primary-300 transition-colors">Forgot password?</Link>
               </div>
               <div className="relative">
-                <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type={showPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="input-field pl-11 pr-11"
+                  className="input-field pr-11"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                   {showPass ? <EyeOff size={17} /> : <Eye size={17} />}
