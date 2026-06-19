@@ -59,7 +59,7 @@ export default function BrowsePage() {
   const hasFilters = search || genre || minPrice || maxPrice || availability;
 
   return (
-    <div className="bg-[#F8F7FF] min-h-screen pb-20">
+    <div className="bg-[#F8F7FF] min-h-screen pb-20 pt-16">
       {/* Genre strip — sticky dark pill bar */}
       <div className="sticky top-16 z-40">
         <GenreStrip
