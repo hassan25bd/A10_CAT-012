@@ -65,15 +65,13 @@ router.get('/featured', async (req, res) => {
   }
 });
 
-// GET /api/ebooks/top-writers  — 3 writers with most sales
+// GET /api/ebooks/top-writers  — 3 writers with most total salesCount
 router.get('/top-writers', async (req, res) => {
   try {
     const User = require('../models/User');
-    const result = await Transaction.aggregate([
-      { $match: { type: 'purchase', status: 'completed' } },
-      { $lookup: { from: 'ebooks', localField: 'ebook', foreignField: '_id', as: 'ebookData' } },
-      { $unwind: '$ebookData' },
-      { $group: { _id: '$ebookData.writer', sales: { $sum: 1 } } },
+    const result = await Ebook.aggregate([
+      { $match: { status: 'published' } },
+      { $group: { _id: '$writer', sales: { $sum: '$salesCount' } } },
       { $sort: { sales: -1 } },
       { $limit: 3 },
     ]);
