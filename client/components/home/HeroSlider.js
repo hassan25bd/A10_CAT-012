@@ -67,11 +67,11 @@ export default function HeroSlider() {
   const genre = GENRES[active];
 
   /* ── Circular genre label positions ── */
-  const R = 132;
+  const R = 158;
   const labelPositions = GENRES.map((g, i) => {
     const angle = (i / GENRES.length) * 360 - 90;
     const rad   = angle * Math.PI / 180;
-    return { ...g, i, x: Math.cos(rad) * R, y: Math.sin(rad) * R, angle };
+    return { ...g, i, x: Math.cos(rad) * R, y: Math.sin(rad) * R };
   });
 
   /* ── Preload all genre backgrounds ── */
@@ -199,37 +199,48 @@ export default function HeroSlider() {
           style={{ x: txX, y: txY }}
         >
           {/* ── Circular genre wheel ── */}
-          <div className="relative mb-6" style={{ width: 300, height: 300 }}>
+          <div className="relative mb-6" style={{ width: 380, height: 380 }}>
 
             {/* Slowly-spinning dashed ring */}
             <motion.svg
-              viewBox="0 0 300 300"
+              viewBox="0 0 380 380"
               className="absolute inset-0 w-full h-full pointer-events-none"
               animate={{ rotate: 360 }}
               transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
             >
-              <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"   strokeDasharray="3 14" />
-              <circle cx="150" cy="150" r="106" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+              <circle cx="190" cy="190" r="158" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"   strokeDasharray="4 14" />
+              <circle cx="190" cy="190" r="128" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
             </motion.svg>
 
-            {/* Genre labels — clickable, fixed positions */}
-            {labelPositions.map(({ name, color, x, y, i }) => {
-              const isActive = active === i;
+            {/* Genre labels — wrapper div holds position, motion.button handles hover */}
+            {labelPositions.map(({ name, color, x, y, i: idx }) => {
+              const isActive = active === idx;
               return (
-                <motion.button
+                <div
                   key={name}
-                  onClick={() => setActive(i)}
-                  whileHover={{ scale: 1.2 }}
-                  className="absolute text-[10px] font-black tracking-[0.2em] uppercase transition-colors duration-300 whitespace-nowrap"
+                  className="absolute"
                   style={{
-                    left: '50%', top: '50%',
-                    transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-                    color: isActive ? color : 'rgba(255,255,255,0.40)',
-                    textShadow: isActive ? `0 0 20px ${color}90` : 'none',
+                    left: `calc(50% + ${x}px)`,
+                    top:  `calc(50% + ${y}px)`,
+                    transform: 'translate(-50%, -50%)',
                   }}
                 >
-                  {name}
-                </motion.button>
+                  <motion.button
+                    onClick={() => setActive(idx)}
+                    whileHover={{ scale: 1.25 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="font-black tracking-[0.18em] uppercase whitespace-nowrap px-2 py-1 rounded-lg transition-colors duration-300"
+                    style={{
+                      fontSize: 13,
+                      color: isActive ? color : 'rgba(255,255,255,0.50)',
+                      textShadow: isActive ? `0 0 22px ${color}` : 'none',
+                      background: isActive ? `${color}15` : 'transparent',
+                      border: `1px solid ${isActive ? color + '40' : 'transparent'}`,
+                    }}
+                  >
+                    {name}
+                  </motion.button>
+                </div>
               );
             })}
 
@@ -242,12 +253,11 @@ export default function HeroSlider() {
                   animate={{ opacity: 1, scale: 1,   rotate: 0   }}
                   exit={{    opacity: 0, scale: 1.2, rotate: 10  }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="flex flex-col items-center gap-1"
                 >
                   <span
                     className="font-display font-black italic leading-none select-none"
                     style={{
-                      fontSize: 72,
+                      fontSize: 80,
                       color: genre.color,
                       textShadow: `0 0 50px ${genre.color}60, 0 0 100px ${genre.color}30`,
                     }}
