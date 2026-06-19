@@ -37,12 +37,30 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal server error' });
 });
 
-const PORT = process.env.PORT || 5000;
+// Serverless-friendly MongoDB connection — reuse across warm invocations
+let isConnected = false;
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Fable server running on port ${PORT}`));
-  })
-  .catch((err) => console.error('MongoDB connection error:', err));
+async function connectDB() {
+  if (isConnected) return;
+  await mongoose.connect(process.env.MONGODB_URI);
+  isConnected = true;
+}
+
+// Wrap app to ensure DB is connected before handling any request
+const handler = async (req, res) => {
+  await connectDB();
+  return app(req, res);
+};
+
+// Local dev: start server normally
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  connectDB()
+    .then(() => {
+      console.log('MongoDB connected');
+      app.listen(PORT, () => console.log(`Fable server running on port ${PORT}`));
+    })
+    .catch((err) => console.error('MongoDB connection error:', err));
+}
+
+module.exports = handler;
