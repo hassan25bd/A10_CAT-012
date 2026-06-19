@@ -205,9 +205,9 @@ router.post('/fix2', async (req, res) => {
       // The Vanishing Hour — starry sky was wrong; use foggy lantern/night street
       { title: 'The Vanishing Hour',
         img: 'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=400&q=80' },
-      // The Dragon's Keep — broken image; use misty fantasy mountain castle
+      // The Dragon's Keep — misty mountain/fantasy castle
       { title: "The Dragon's Keep",
-        img: 'https://images.unsplash.com/photo-1518562278496-a851d3c5b5e4?w=400&q=80' },
+        img: 'https://images.unsplash.com/photo-1604537529428-15bcbeecfe4d?w=400&q=80' },
       // The Quantum Garden — vinyl records was wrong; use glowing exotic plants
       { title: 'The Quantum Garden',
         img: 'https://images.unsplash.com/photo-1530968033775-2c92736b131e?w=400&q=80' },
