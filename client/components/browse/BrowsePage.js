@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import API from '../../lib/api';
 import EbookCard from '../EbookCard';
 import SkeletonCard from '../SkeletonCard';
+import GenreStrip from '../GenreStrip';
 import { useAuth } from '../../lib/AuthContext';
 
 const GENRES = ['Fiction', 'Mystery', 'Romance', 'Sci-Fi', 'Fantasy', 'Horror', 'Biography', 'Self-Help', 'History', 'Poetry', 'Thriller', 'Adventure'];
@@ -58,12 +59,21 @@ export default function BrowsePage() {
   const hasFilters = search || genre || minPrice || maxPrice || availability;
 
   return (
-    <div className="bg-dark-900 min-h-screen pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-[#F8F7FF] min-h-screen pb-20">
+      {/* Genre strip — sticky dark pill bar */}
+      <div className="sticky top-16 z-40">
+        <GenreStrip
+          genres={GENRES}
+          active={genre}
+          onChange={(g) => { setGenre(g); setPage(1); }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-white">Browse Ebooks</h1>
-          <p className="text-gray-400 mt-1">{data?.total || 0} ebooks available</p>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-900">Browse Ebooks</h1>
+          <p className="text-slate-500 mt-1">{data?.total || 0} ebooks available</p>
         </motion.div>
 
         {/* Search & Filter Bar */}
@@ -74,14 +84,14 @@ export default function BrowsePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by title or writer name..."
-                className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white placeholder-gray-500 rounded-xl px-4 py-3 outline-none transition-colors"
+                className="w-full bg-white border border-slate-200 focus:border-indigo-400 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 outline-none transition-colors"
               />
             </div>
 
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="bg-dark-700 border border-gray-700 focus:border-primary-500 text-white rounded-xl px-4 py-3 outline-none transition-colors cursor-pointer"
+              className="bg-white border border-slate-200 focus:border-indigo-400 text-slate-700 rounded-xl px-4 py-3 outline-none transition-colors cursor-pointer"
             >
               <option value="newest">Newest First</option>
               <option value="price_asc">Price: Low to High</option>
@@ -93,8 +103,8 @@ export default function BrowsePage() {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all text-sm font-medium ${
                 showFilters || hasFilters
-                  ? 'bg-primary-600/20 border-primary-500 text-primary-300'
-                  : 'bg-dark-700 border-gray-700 text-gray-300 hover:border-primary-500 hover:text-white'
+                  ? 'bg-indigo-50 border-indigo-300 text-indigo-600'
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
               }`}
             >
               <SlidersHorizontal size={16} />
@@ -111,14 +121,14 @@ export default function BrowsePage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-4 pt-4 border-t border-gray-700/50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+              className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             >
               <div>
-                <label className="text-xs text-gray-400 mb-1.5 block font-medium">Genre</label>
+                <label className="text-xs text-slate-500 mb-1.5 block font-medium">Genre</label>
                 <select
                   value={genre}
                   onChange={(e) => { setGenre(e.target.value); setPage(1); }}
-                  className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white rounded-xl px-3 py-2.5 outline-none text-sm"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-400 text-slate-800 rounded-xl px-3 py-2.5 outline-none text-sm"
                 >
                   <option value="">All Genres</option>
                   {GENRES.map((g) => <option key={g} value={g}>{g}</option>)}
@@ -126,31 +136,31 @@ export default function BrowsePage() {
               </div>
 
               <div>
-                <label className="text-xs text-gray-400 mb-1.5 block font-medium">Min Price ($)</label>
+                <label className="text-xs text-slate-500 mb-1.5 block font-medium">Min Price ($)</label>
                 <input
                   type="number" min="0" value={minPrice}
                   onChange={(e) => { setMinPrice(e.target.value); setPage(1); }}
                   placeholder="0"
-                  className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white placeholder-gray-600 rounded-xl px-3 py-2.5 outline-none text-sm"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-400 text-slate-800 placeholder-slate-300 rounded-xl px-3 py-2.5 outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-gray-400 mb-1.5 block font-medium">Max Price ($)</label>
+                <label className="text-xs text-slate-500 mb-1.5 block font-medium">Max Price ($)</label>
                 <input
                   type="number" min="0" value={maxPrice}
                   onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }}
                   placeholder="Any"
-                  className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white placeholder-gray-600 rounded-xl px-3 py-2.5 outline-none text-sm"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-400 text-slate-800 placeholder-slate-300 rounded-xl px-3 py-2.5 outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-gray-400 mb-1.5 block font-medium">Availability</label>
+                <label className="text-xs text-slate-500 mb-1.5 block font-medium">Availability</label>
                 <select
                   value={availability}
                   onChange={(e) => { setAvailability(e.target.value); setPage(1); }}
-                  className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white rounded-xl px-3 py-2.5 outline-none text-sm"
+                  className="w-full bg-white border border-slate-200 focus:border-indigo-400 text-slate-800 rounded-xl px-3 py-2.5 outline-none text-sm"
                 >
                   <option value="">All</option>
                   <option value="available">Available</option>
@@ -165,23 +175,6 @@ export default function BrowsePage() {
               )}
             </motion.div>
           )}
-        </div>
-
-        {/* Genre pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-8 no-scrollbar">
-          {['', ...GENRES].map((g) => (
-            <button
-              key={g || 'all'}
-              onClick={() => { setGenre(g); setPage(1); }}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
-                genre === g
-                  ? 'bg-primary-600 text-white border-primary-500'
-                  : 'bg-dark-700 text-gray-400 border-gray-700 hover:border-primary-500 hover:text-white'
-              }`}
-            >
-              {g || 'All'}
-            </button>
-          ))}
         </div>
 
         {/* Results */}
@@ -215,7 +208,7 @@ export default function BrowsePage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="w-10 h-10 rounded-xl bg-dark-700 border border-gray-700 text-white flex items-center justify-center hover:border-primary-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-white flex items-center justify-center hover:border-primary-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -239,7 +232,7 @@ export default function BrowsePage() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="w-10 h-10 rounded-xl bg-dark-700 border border-gray-700 text-white flex items-center justify-center hover:border-primary-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-white flex items-center justify-center hover:border-primary-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronRight size={16} />
                 </button>

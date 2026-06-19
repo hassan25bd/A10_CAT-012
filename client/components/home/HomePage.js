@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { BookOpen, ArrowRight, Zap, Sparkles } from 'lucide-react';
@@ -6,11 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import API from '../../lib/api';
 import EbookCard from '../EbookCard';
 import SkeletonCard from '../SkeletonCard';
+import GenreStrip from '../GenreStrip';
 import HeroSlider from './HeroSlider';
 import GenreGrid from './GenreGrid';
 import TopWriters from './TopWriters';
 
+const HOME_GENRES = ['Fiction', 'Mystery', 'Romance', 'Sci-Fi', 'Fantasy', 'Horror', 'Biography', 'Self-Help', 'History', 'Poetry', 'Thriller', 'Adventure'];
+
 export default function HomePage() {
+  const router = useRouter();
   const { data: featured = [], isLoading } = useQuery({
     queryKey: ['featured'],
     queryFn: () => API.get('/ebooks/featured').then((r) => r.data),
@@ -19,6 +24,13 @@ export default function HomePage() {
   return (
     <div>
       <HeroSlider />
+
+      {/* Genre quick-nav strip */}
+      <GenreStrip
+        genres={HOME_GENRES}
+        active=""
+        onChange={(g) => router.push(g ? `/browse?genre=${g}` : '/browse')}
+      />
 
       {/* Featured Ebooks */}
       <section className="py-24 bg-white">
