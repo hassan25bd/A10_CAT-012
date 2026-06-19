@@ -20,10 +20,18 @@ export default function Footer() {
               Connecting ebook lovers with talented writers. Discover, read, and share original stories from around the world.
             </p>
             <div className="flex gap-3">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+              {[
+                { Icon: Facebook,  href: 'https://www.facebook.com/',  label: 'Facebook'  },
+                { Icon: Twitter,   href: 'https://www.twitter.com/',   label: 'Twitter'   },
+                { Icon: Instagram, href: 'https://www.instagram.com/', label: 'Instagram' },
+                { Icon: Youtube,   href: 'https://www.youtube.com/',   label: 'YouTube'   },
+              ].map(({ Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
                   className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-indigo-600 border border-slate-700 hover:border-indigo-500 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-200"
                 >
                   <Icon size={15} />
