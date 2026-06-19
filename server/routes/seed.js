@@ -263,4 +263,33 @@ router.post('/fix3', async (req, res) => {
   }
 });
 
+// POST /api/seed/fix4 — fix horror book cover images
+router.post('/fix4', async (req, res) => {
+  try {
+    const secret = req.headers['x-seed-secret'];
+    if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
+
+    const fixes = [
+      // Horror — The Hollow House (cactus was VERY wrong)
+      { title: 'The Hollow House',
+        img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&q=80' },
+      // Horror — Dark Waters (tropical beach was wrong for deep sea horror)
+      { title: 'Dark Waters',
+        img: 'https://images.unsplash.com/photo-1542315192-1f61a1792f33?w=400&q=80' },
+      // Horror — The Visitor (movie theater — going for more atmospheric)
+      { title: 'The Visitor',
+        img: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=400&q=80' },
+    ];
+
+    let fixed = 0;
+    for (const f of fixes) {
+      const r = await Ebook.updateOne({ title: f.title }, { $set: { coverImage: f.img } });
+      if (r.modifiedCount) fixed++;
+    }
+    res.json({ message: '✅ Fix4 done!', imagesFixed: fixed });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

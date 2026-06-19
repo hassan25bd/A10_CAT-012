@@ -132,6 +132,19 @@ router.put('/:id', protect, requireRole('writer', 'admin'), async (req, res) => 
   }
 });
 
+// PATCH /api/ebooks/:id/cover  — admin only, quick cover image update
+router.patch('/:id/cover', protect, requireRole('admin'), async (req, res) => {
+  try {
+    const { coverImage } = req.body;
+    if (!coverImage) return res.status(400).json({ message: 'coverImage required' });
+    const ebook = await Ebook.findByIdAndUpdate(req.params.id, { coverImage }, { new: true });
+    if (!ebook) return res.status(404).json({ message: 'Ebook not found' });
+    res.json({ message: 'Cover updated', coverImage: ebook.coverImage });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // DELETE /api/ebooks/:id  — writer (own) or admin
 router.delete('/:id', protect, requireRole('writer', 'admin'), async (req, res) => {
   try {

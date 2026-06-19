@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Trash2, Eye, EyeOff, Search, BookMarked } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trash2, Eye, EyeOff, ImageIcon, Check, X } from 'lucide-react';
 import API from '../../../../lib/api';
 import toast from 'react-hot-toast';
 import { SkeletonTable } from '../../../../components/SkeletonCard';
@@ -11,6 +11,17 @@ export default function AdminEbooksPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [coverEdit, setCoverEdit] = useState(null); // { id, url }
+
+  const coverMutation = useMutation({
+    mutationFn: ({ id, url }) => API.patch(`/ebooks/${id}/cover`, { coverImage: url }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-ebooks']);
+      toast.success('Cover image updated!');
+      setCoverEdit(null);
+    },
+    onError: () => toast.error('Failed to update cover'),
+  });
 
   const { data: ebooks = [], isLoading } = useQuery({
     queryKey: ['admin-ebooks'],
@@ -56,6 +67,7 @@ export default function AdminEbooksPage() {
                 </thead>
                 <tbody>
                   {filtered.map((eb, i) => (
+                    <>
                     <motion.tr key={eb._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
                       <td>
                         <div className="w-10 h-12 rounded-lg overflow-hidden bg-dark-700">
@@ -83,12 +95,60 @@ export default function AdminEbooksPage() {
                           <button onClick={() => publishMutation.mutate(eb._id)} className="p-1.5 rounded-lg bg-green-500/15 text-green-400 hover:bg-green-500/25 transition-colors" title={eb.status === 'published' ? 'Unpublish' : 'Publish'}>
                             {eb.status === 'published' ? <EyeOff size={14} /> : <Eye size={14} />}
                           </button>
+                          <button
+                            onClick={() => setCoverEdit(coverEdit?.id === eb._id ? null : { id: eb._id, url: eb.coverImage || '' })}
+                            className={`p-1.5 rounded-lg transition-colors ${coverEdit?.id === eb._id ? 'bg-indigo-500/30 text-indigo-300' : 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25'}`}
+                            title="Change cover image"
+                          >
+                            <ImageIcon size={14} />
+                          </button>
                           <button onClick={() => setConfirmDelete(eb)} className="p-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors">
                             <Trash2 size={14} />
                           </button>
                         </div>
                       </td>
                     </motion.tr>
+                    <AnimatePresence>
+                      {coverEdit?.id === eb._id && (
+                        <motion.tr
+                          key={`cover-edit-${eb._id}`}
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                        >
+                          <td colSpan={6} className="py-2 px-3">
+                            <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-3">
+                              {coverEdit.url && (
+                                <img src={coverEdit.url} alt="" className="w-10 h-12 rounded-lg object-cover flex-shrink-0 border border-white/10" onError={(e) => e.target.style.display='none'} />
+                              )}
+                              <input
+                                autoFocus
+                                type="url"
+                                value={coverEdit.url}
+                                onChange={(e) => setCoverEdit(prev => ({ ...prev, url: e.target.value }))}
+                                placeholder="Paste image URL (Unsplash, any direct image link)…"
+                                className="flex-1 bg-dark-800 text-white text-sm px-3 py-2 rounded-lg border border-gray-600 focus:border-indigo-500 focus:outline-none"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') coverMutation.mutate({ id: eb._id, url: coverEdit.url });
+                                  if (e.key === 'Escape') setCoverEdit(null);
+                                }}
+                              />
+                              <button
+                                onClick={() => coverMutation.mutate({ id: eb._id, url: coverEdit.url })}
+                                disabled={!coverEdit.url || coverMutation.isPending}
+                                className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-40 transition-colors"
+                              >
+                                <Check size={14} />
+                              </button>
+                              <button onClick={() => setCoverEdit(null)} className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors">
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      )}
+                    </AnimatePresence>
+                    </>
                   ))}
                 </tbody>
               </table>
