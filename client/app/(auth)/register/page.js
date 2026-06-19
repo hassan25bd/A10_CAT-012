@@ -77,6 +77,7 @@ export default function RegisterPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 onSubmit={handleStep1}
+                noValidate
                 className="space-y-5"
               >
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-4">Step 1 — Your Details</p>

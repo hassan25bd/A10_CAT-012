@@ -58,7 +58,7 @@ export default function LoginPage() {
         </div>
 
         <div className="glass rounded-2xl p-8 border border-gray-700/50">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
               <div className="relative">
