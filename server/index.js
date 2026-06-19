@@ -23,6 +23,18 @@ app.use(express.json());
 
 app.get('/', (req, res) => res.json({ message: 'Fable API is running' }));
 
+// Health check without DB
+app.get('/api/health', (req, res) => {
+  const uri = process.env.MONGODB_URI || '';
+  res.json({
+    status: 'ok',
+    uri_length: uri.length,
+    uri_prefix: uri.substring(0, 30),
+    node_env: process.env.NODE_ENV,
+    mongoose_state: mongoose.connection.readyState,
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/ebooks', ebookRoutes);
 app.use('/api/users', userRoutes);
@@ -42,13 +54,24 @@ let isConnected = false;
 
 async function connectDB() {
   if (isConnected) return;
-  await mongoose.connect(process.env.MONGODB_URI);
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error('MONGODB_URI environment variable is not set');
+  await mongoose.connect(uri);
   isConnected = true;
 }
 
 // Wrap app to ensure DB is connected before handling any request
 const handler = async (req, res) => {
-  await connectDB();
+  // Health check bypasses DB
+  if (req.url === '/api/health' || req.url === '/') {
+    return app(req, res);
+  }
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB connect error:', err.message);
+    return res.status(500).json({ message: 'Database connection failed', error: err.message });
+  }
   return app(req, res);
 };
 
