@@ -85,8 +85,8 @@ export default function EbookForm({ initialData = {}, onSubmit, loading }) {
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-1.5">Title *</label>
         <div className="relative">
-          <BookOpen size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Enter ebook title" className="input-field pl-10" />
+          <BookOpen size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Enter ebook title" className="input-field pl-11" />
         </div>
       </div>
 
@@ -95,8 +95,8 @@ export default function EbookForm({ initialData = {}, onSubmit, loading }) {
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1.5">Genre *</label>
           <div className="relative">
-            <Tag size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-            <select value={genre} onChange={(e) => setGenre(e.target.value)} required className="input-field pl-10 appearance-none cursor-pointer">
+            <Tag size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+            <select value={genre} onChange={(e) => setGenre(e.target.value)} required className="input-field pl-11 appearance-none cursor-pointer">
               <option value="">Select genre</option>
               {GENRES.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
@@ -105,8 +105,8 @@ export default function EbookForm({ initialData = {}, onSubmit, loading }) {
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1.5">Price (USD) *</label>
           <div className="relative">
-            <DollarSign size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-            <input type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="9.99" className="input-field pl-10" />
+            <DollarSign size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+            <input type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="9.99" className="input-field pl-11" />
           </div>
         </div>
       </div>

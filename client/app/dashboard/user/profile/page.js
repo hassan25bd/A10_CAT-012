@@ -76,16 +76,16 @@ export default function ProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
               <div className="relative">
-                <User size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input value={name} onChange={(e) => setName(e.target.value)} className="input-field pl-10" required />
+                <User size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input value={name} onChange={(e) => setName(e.target.value)} className="input-field pl-11" required />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
               <div className="relative">
-                <Mail size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input value={user?.email} className="input-field pl-10 opacity-60 cursor-not-allowed" disabled />
+                <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input value={user?.email} className="input-field pl-11 opacity-60 cursor-not-allowed" disabled />
               </div>
               <p className="text-xs text-gray-600 mt-1">Email cannot be changed</p>
             </div>
@@ -93,8 +93,8 @@ export default function ProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Role</label>
               <div className="relative">
-                <Shield size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input value={user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)} className="input-field pl-10 opacity-60 cursor-not-allowed capitalize" disabled />
+                <Shield size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input value={user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)} className="input-field pl-11 opacity-60 cursor-not-allowed capitalize" disabled />
               </div>
             </div>
 

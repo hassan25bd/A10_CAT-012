@@ -70,12 +70,12 @@ export default function BrowsePage() {
         <div className="glass rounded-2xl p-4 mb-8 border border-gray-700/50">
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
-              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by title or writer name..."
-                className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white placeholder-gray-500 rounded-xl pl-10 pr-4 py-3 outline-none transition-colors"
+                className="w-full bg-dark-700 border border-gray-700 focus:border-primary-500 text-white placeholder-gray-500 rounded-xl pl-11 pr-4 py-3 outline-none transition-colors"
               />
             </div>
 
