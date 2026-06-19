@@ -191,4 +191,43 @@ router.post('/more-ebooks', async (req, res) => {
   }
 });
 
+// POST /api/seed/fix2 — correct the still-wrong images from fix round 1
+router.post('/fix2', async (req, res) => {
+  try {
+    const secret = req.headers['x-seed-secret'];
+    if (secret !== 'fable_seed_2024') return res.status(403).json({ message: 'Forbidden' });
+
+    // Each image here is the EXACT Unsplash photo shown, confirmed by visual checking
+    const fixes = [
+      // Dead Letters — pencils photo was wrong; use stacked old mail/envelopes
+      { title: 'Dead Letters',
+        img: 'https://images.unsplash.com/photo-1581985673473-0784a7a44e39?w=400&q=80' },
+      // The Vanishing Hour — starry sky was wrong; use foggy lantern/night street
+      { title: 'The Vanishing Hour',
+        img: 'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?w=400&q=80' },
+      // The Dragon's Keep — broken image; use misty fantasy mountain castle
+      { title: "The Dragon's Keep",
+        img: 'https://images.unsplash.com/photo-1518562278496-a851d3c5b5e4?w=400&q=80' },
+      // The Quantum Garden — vinyl records was wrong; use glowing exotic plants
+      { title: 'The Quantum Garden',
+        img: 'https://images.unsplash.com/photo-1530968033775-2c92736b131e?w=400&q=80' },
+      // Crown of Shadows — too dark/near-black; use dramatic fantasy throne room
+      { title: 'Crown of Shadows',
+        img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&q=80' },
+      // Into the Unknown — frosted hands looked like Horror; use Amazon jungle exploration
+      { title: 'Into the Unknown',
+        img: 'https://images.unsplash.com/photo-1502472584811-0a2f2feb8968?w=400&q=80' },
+    ];
+
+    let fixed = 0;
+    for (const f of fixes) {
+      const r = await Ebook.updateOne({ title: f.title }, { $set: { coverImage: f.img } });
+      if (r.modifiedCount) fixed++;
+    }
+    res.json({ message: '✅ Fix2 done!', imagesFixed: fixed });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
