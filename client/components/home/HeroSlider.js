@@ -1,13 +1,9 @@
 'use client';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowRight, BookOpen, Star, Users, TrendingUp, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Star, Users, TrendingUp } from 'lucide-react';
 
-/* ─── Welcome slide ─────────────────────────────────────────── */
-const WELCOME_BG = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=85';
-
-/* ─── Genre slides ───────────────────────────────────────────── */
 const GENRES = [
   { name: 'Fiction',   bg: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=85', color: '#60A5FA', tagline: 'Worlds built from words' },
   { name: 'Mystery',   bg: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920&q=85', color: '#FCD34D', tagline: 'Every clue tells a story' },
@@ -20,84 +16,57 @@ const GENRES = [
 ];
 
 const STATS = [
-  { icon: BookOpen,   value: '1,200+', label: 'Ebooks'        },
-  { icon: Users,      value: '8,500+', label: 'Readers'       },
-  { icon: Star,       value: '340+',   label: 'Writers'       },
-  { icon: TrendingUp, value: '2,100+', label: 'Monthly Sales' },
+  { icon: BookOpen,    value: '1,200+', label: 'Ebooks'       },
+  { icon: Users,       value: '8,500+', label: 'Readers'      },
+  { icon: Star,        value: '340+',   label: 'Writers'      },
+  { icon: TrendingUp,  value: '2,100+', label: 'Monthly Sales'},
 ];
 
 const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
   id: i,
-  x: 3 + (i * 13 + 7) % 94,
-  y: 2 + (i * 17 + 3) % 96,
-  size: 0.8 + (i % 4) * 0.6,
-  duration: 6 + (i * 0.55) % 10,
-  delay: (i * 0.38) % 8,
-  opacity: 0.12 + (i % 5) * 0.07,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: 0.8 + Math.random() * 2,
+  duration: 6 + Math.random() * 10,
+  delay: Math.random() * 8,
+  opacity: 0.15 + Math.random() * 0.35,
 }));
 
-/* floating 3-D geometric shapes */
-const SHAPES = [
-  { type: 'ring',   size: 120, x: '8%',  y: '18%', dur: 18, delay: 0,   rot: [0,   360] },
-  { type: 'ring',   size: 80,  x: '88%', y: '22%', dur: 24, delay: 3,   rot: [360, 0  ] },
-  { type: 'ring',   size: 55,  x: '15%', y: '72%', dur: 20, delay: 6,   rot: [0,   360] },
-  { type: 'dot',    size: 10,  x: '75%', y: '65%', dur: 4,  delay: 1,   rot: [0,   0  ] },
-  { type: 'dot',    size: 6,   x: '30%', y: '85%', dur: 5,  delay: 2.5, rot: [0,   0  ] },
-  { type: 'square', size: 40,  x: '82%', y: '78%', dur: 30, delay: 0,   rot: [0,   360] },
-  { type: 'square', size: 24,  x: '5%',  y: '45%', dur: 22, delay: 4,   rot: [360, 0  ] },
-];
-
 export default function HeroSlider() {
-  const containerRef  = useRef(null);
-  const [active, setActive]         = useState(1);
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [cursor, setCursor]         = useState({ x: -200, y: -200, visible: false });
+  const containerRef = useRef(null);
+  const [active, setActive]   = useState(1);
+  const [cursor, setCursor]   = useState({ x: -200, y: -200, visible: false });
 
-  /* ── preload ── */
-  useEffect(() => {
-    [WELCOME_BG, ...GENRES.map(g => g.bg)].forEach(src => {
-      const img = new Image(); img.src = src;
-    });
-  }, []);
-
-  /* ── spring-smoothed pointer tracking ── */
-  const cfg   = { stiffness: 30, damping: 18 };
+  /* ── Spring-smoothed mouse tracking ── */
+  const cfg = { stiffness: 30, damping: 18 };
   const mouseX = useSpring(0, cfg);
   const mouseY = useSpring(0, cfg);
 
-  /* parallax layers */
-  const bgX = useTransform(mouseX, v => `${v * 0.18}px`);
-  const bgY = useTransform(mouseY, v => `${v * 0.18}px`);
-  const ptX = useTransform(mouseX, v => `${v * 0.45}px`);
-  const ptY = useTransform(mouseY, v => `${v * 0.45}px`);
-  const fgX = useTransform(mouseX, v => `${v * 0.9}px`);
-  const fgY = useTransform(mouseY, v => `${v * 0.9}px`);
-  const txX = useTransform(mouseX, v => `${v * 0.1}px`);
-  const txY = useTransform(mouseY, v => `${v * 0.1}px`);
+  /* ── Per-layer parallax transforms ── */
+  const bgX  = useTransform(mouseX, v => `${v * 0.18}px`);
+  const bgY  = useTransform(mouseY, v => `${v * 0.18}px`);
+  const ptX  = useTransform(mouseX, v => `${v * 0.45}px`);
+  const ptY  = useTransform(mouseY, v => `${v * 0.45}px`);
+  const fgX  = useTransform(mouseX, v => `${v * 0.9}px`);
+  const fgY  = useTransform(mouseY, v => `${v * 0.9}px`);
+  const txX  = useTransform(mouseX, v => `${v * 0.1}px`);
+  const txY  = useTransform(mouseY, v => `${v * 0.1}px`);
 
-  /* 3-D tilt on the centre content card */
-  const tiltX = useTransform(mouseY, v => `${-v * 0.13}deg`);
-  const tiltY = useTransform(mouseX, v => `${v * 0.13}deg`);
-
-  /* shape layer — opposite to mouse for depth feeling */
-  const shpX = useTransform(mouseX, v => `${-v * 0.25}px`);
-  const shpY = useTransform(mouseY, v => `${-v * 0.25}px`);
-
-  const updatePointer = useCallback((clientX, clientY) => {
+  const onMouseMove = (e) => {
     const r = containerRef.current?.getBoundingClientRect();
     if (!r) return;
-    mouseX.set((clientX / r.width  - 0.5) * 100);
-    mouseY.set((clientY / r.height - 0.5) * 70);
-  }, [mouseX, mouseY]);
-
-  const onMouseMove  = (e) => { updatePointer(e.clientX, e.clientY); setCursor({ x: e.clientX, y: e.clientY, visible: true }); };
-  const onMouseLeave = ()  => { mouseX.set(0); mouseY.set(0); setCursor(c => ({ ...c, visible: false })); };
-  const onTouchMove  = (e) => { const t = e.touches[0]; if (t) updatePointer(t.clientX, t.clientY); };
-  const onTouchEnd   = ()  => { mouseX.set(0); mouseY.set(0); };
+    mouseX.set((e.clientX / r.width  - 0.5) * 100);
+    mouseY.set((e.clientY / r.height - 0.5) * 70);
+    setCursor({ x: e.clientX, y: e.clientY, visible: true });
+  };
+  const onMouseLeave = () => {
+    mouseX.set(0); mouseY.set(0);
+    setCursor(c => ({ ...c, visible: false }));
+  };
 
   const genre = GENRES[active];
 
-  /* genre wheel positions */
+  /* ── Circular genre label positions ── */
   const R = 158;
   const labelPositions = GENRES.map((g, i) => {
     const angle = (i / GENRES.length) * 360 - 90;
@@ -105,17 +74,20 @@ export default function HeroSlider() {
     return { ...g, i, x: Math.cos(rad) * R, y: Math.sin(rad) * R };
   });
 
-  const currentBg = showWelcome ? WELCOME_BG : genre.bg;
-  const currentColor = showWelcome ? '#a78bfa' : genre.color;
+  /* ── Preload all genre backgrounds ── */
+  useEffect(() => {
+    GENRES.forEach(g => { const img = new Image(); img.src = g.bg; });
+  }, []);
 
   return (
     <>
-      {/* ── custom glowing cursor ── */}
+      {/* ─── Custom glowing cursor ─── */}
       <div
         className="fixed pointer-events-none z-[99999]"
         style={{
-          left: cursor.x, top: cursor.y,
-          transform: 'translate(-50%,-50%)',
+          left: cursor.x,
+          top:  cursor.y,
+          transform: 'translate(-50%, -50%)',
           opacity: cursor.visible ? 1 : 0,
           transition: 'opacity 0.2s',
         }}
@@ -123,8 +95,8 @@ export default function HeroSlider() {
         <div
           className="w-5 h-5 rounded-full"
           style={{
-            background: currentColor,
-            boxShadow: `0 0 18px 4px ${currentColor}70`,
+            background: genre.color,
+            boxShadow: `0 0 18px 4px ${genre.color}70`,
             mixBlendMode: 'screen',
           }}
         />
@@ -133,32 +105,10 @@ export default function HeroSlider() {
       <section
         ref={containerRef}
         className="relative w-full min-h-screen overflow-hidden flex flex-col"
-        style={{ cursor: 'none', perspective: '1200px' }}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        style={{ cursor: 'none' }}
       >
-
-        {/* ══ LAYER 0 — 3D depth grid ══ */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none z-[0]"
-          style={{ x: bgX, y: bgY }}
-        >
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)
-              `,
-              backgroundSize: '60px 60px',
-              transform: 'perspective(600px) rotateX(25deg) scale(1.4)',
-              transformOrigin: 'center bottom',
-            }}
-          />
-        </motion.div>
-
         {/* ══ LAYER 1 — Background image (slowest) ══ */}
         <motion.div
           className="absolute pointer-events-none"
@@ -166,37 +116,39 @@ export default function HeroSlider() {
         >
           <AnimatePresence mode="wait">
             <motion.img
-              key={currentBg}
-              src={currentBg}
+              key={genre.bg}
+              src={genre.bg}
               alt=""
               className="w-full h-full object-cover"
-              initial={{ opacity: 0, scale: 1.06 }}
+              initial={{ opacity: 0, scale: 1.04 }}
               animate={{ opacity: 1,  scale: 1    }}
               exit={{    opacity: 0              }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              transition={{ duration: 1.1, ease: 'easeInOut' }}
             />
           </AnimatePresence>
         </motion.div>
 
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/25 to-black/80 pointer-events-none z-[1]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30 pointer-events-none z-[1]" />
-
-        {/* Colour tint */}
+        <div className="absolute inset-0 bg-gradient-to-b  from-black/60 via-black/20 to-black/75 pointer-events-none z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-r  from-black/25 via-transparent to-black/25 pointer-events-none z-[1]" />
+        {/* Colour tint that matches active genre */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentColor}
+            key={active}
             className="absolute inset-0 pointer-events-none z-[1]"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.10 }}
+            animate={{ opacity: 0.08 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
-            style={{ background: currentColor }}
+            style={{ background: genre.color }}
           />
         </AnimatePresence>
 
-        {/* ══ LAYER 2 — Floating 3D particles ══ */}
-        <motion.div className="absolute inset-0 pointer-events-none z-[2]" style={{ x: ptX, y: ptY }}>
+        {/* ══ LAYER 2 — Floating particles (medium speed) ══ */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-[2]"
+          style={{ x: ptX, y: ptY }}
+        >
           {PARTICLES.map(p => (
             <motion.div
               key={p.id}
@@ -208,67 +160,17 @@ export default function HeroSlider() {
           ))}
         </motion.div>
 
-        {/* ══ LAYER 3 — 3D floating geometric shapes ══ */}
+        {/* ══ LAYER 3 — Foreground decorative text (fast parallax) ══ */}
         <motion.div
-          className="absolute inset-0 pointer-events-none z-[3]"
-          style={{ x: shpX, y: shpY }}
-        >
-          {SHAPES.map((s, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              style={{ left: s.x, top: s.y, width: s.size, height: s.size }}
-              animate={{
-                rotate: s.rot,
-                y: [0, -18, 0],
-                scale: [1, 1.08, 1],
-              }}
-              transition={{
-                rotate: { duration: s.dur, repeat: Infinity, ease: 'linear' },
-                y:      { duration: s.dur * 0.6, repeat: Infinity, ease: 'easeInOut', delay: s.delay },
-                scale:  { duration: s.dur * 0.5, repeat: Infinity, ease: 'easeInOut', delay: s.delay + 1 },
-              }}
-            >
-              {s.type === 'ring' && (
-                <div
-                  className="w-full h-full rounded-full"
-                  style={{
-                    border: `1px solid ${currentColor}30`,
-                    boxShadow: `0 0 12px ${currentColor}15`,
-                  }}
-                />
-              )}
-              {s.type === 'square' && (
-                <div
-                  className="w-full h-full rounded-md"
-                  style={{
-                    border: `1px solid ${currentColor}25`,
-                    boxShadow: `0 0 8px ${currentColor}10`,
-                  }}
-                />
-              )}
-              {s.type === 'dot' && (
-                <motion.div
-                  className="w-full h-full rounded-full"
-                  style={{ background: currentColor, opacity: 0.35 }}
-                  animate={{ scale: [1, 1.6, 1], opacity: [0.35, 0.15, 0.35] }}
-                  transition={{ duration: s.dur, repeat: Infinity, ease: 'easeInOut', delay: s.delay }}
-                />
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* ══ LAYER 4 — Foreground decorative text ══ */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none z-[4] hidden lg:block"
+          className="absolute inset-0 pointer-events-none z-[3] hidden lg:block"
           style={{ x: fgX, y: fgY }}
         >
           <p className="absolute top-24 left-24 text-white/10 text-xs tracking-[0.4em] font-semibold uppercase">Est. 2024</p>
           <p className="absolute top-24 right-10  text-white/10 text-xs tracking-[0.3em] uppercase">Read · Discover · Write</p>
+          <p className="absolute bottom-32 left-24 text-white/8  text-xs tracking-[0.5em] uppercase rotate-90 origin-left">Fable</p>
         </motion.div>
 
-        {/* ══ LAYER 5 — Left sidebar ══ */}
+        {/* ══ LAYER 4 — Left sidebar ══ */}
         <motion.div
           className="absolute left-7 top-1/2 -translate-y-1/2 z-[10] hidden lg:flex flex-col items-center gap-4"
           style={{ x: ptX, y: ptY }}
@@ -291,316 +193,163 @@ export default function HeroSlider() {
           ))}
         </motion.div>
 
-        {/* ══ LAYER 6 — WELCOME SCREEN ══ */}
-        <AnimatePresence>
-          {showWelcome && (
-            <motion.div
-              key="welcome"
-              className="absolute inset-0 z-[20] flex flex-col items-center justify-center text-center px-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.8 }}
-              style={{
-                rotateX: tiltX,
-                rotateY: tiltY,
-                transformStyle: 'preserve-3d',
-              }}
+        {/* ══ LAYER 5 — Central content (subtle parallax) ══ */}
+        <motion.div
+          className="relative flex-1 flex flex-col items-center justify-center text-center z-[10] px-6 py-32"
+          style={{ x: txX, y: txY }}
+        >
+          {/* ── Circular genre wheel ── */}
+          <div className="relative mb-6" style={{ width: 380, height: 380 }}>
+
+            {/* Slowly-spinning dashed ring */}
+            <motion.svg
+              viewBox="0 0 380 380"
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
             >
-              {/* Pulsing rings */}
-              {[1, 2, 3].map(ring => (
-                <motion.div
-                  key={ring}
-                  className="absolute rounded-full border border-violet-400/20 pointer-events-none"
-                  style={{ width: 200 + ring * 120, height: 200 + ring * 120 }}
-                  animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: ring * 0.9, ease: 'easeOut' }}
-                />
-              ))}
+              <circle cx="190" cy="190" r="158" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"   strokeDasharray="4 14" />
+              <circle cx="190" cy="190" r="128" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+            </motion.svg>
 
-              {/* Welcome badge */}
-              <motion.div
-                initial={{ scale: 0.6, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
-                className="mb-6"
-              >
+            {/* Genre labels — wrapper div holds position, motion.button handles hover */}
+            {labelPositions.map(({ name, color, x, y, i: idx }) => {
+              const isActive = active === idx;
+              return (
                 <div
-                  className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-violet-400/30 bg-violet-500/15 backdrop-blur-sm"
-                >
-                  <motion.span
-                    animate={{ rotate: [0, 20, -20, 0], scale: [1, 1.2, 1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    <Sparkles size={14} className="text-violet-300" />
-                  </motion.span>
-                  <span className="text-violet-200 text-xs font-bold tracking-[0.3em] uppercase">Welcome to Fable</span>
-                </div>
-              </motion.div>
-
-              {/* Big title */}
-              <motion.h1
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="font-display font-black text-white leading-none mb-4 select-none"
-                style={{
-                  fontSize: 'clamp(56px, 10vw, 110px)',
-                  textShadow: '0 4px 60px rgba(167,139,250,0.4), 0 2px 20px rgba(0,0,0,0.8)',
-                }}
-              >
-                Fable
-              </motion.h1>
-
-              {/* Subtitle */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6 }}
-                className="text-white/70 text-lg md:text-xl mb-2 max-w-lg leading-relaxed"
-              >
-                A digital library where every story finds its reader.
-              </motion.p>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
-                className="text-violet-300/70 text-xs tracking-[0.35em] uppercase mb-10"
-              >
-                Read · Discover · Write · Share
-              </motion.p>
-
-              {/* CTA */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1, duration: 0.5 }}
-                className="flex flex-col sm:flex-row gap-4 items-center"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.06, y: -2 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => setShowWelcome(false)}
-                  className="inline-flex items-center gap-2 font-black text-sm tracking-widest uppercase px-8 py-4 rounded-full"
+                  key={name}
+                  className="absolute"
                   style={{
-                    background: 'linear-gradient(135deg,#7c3aed,#a78bfa)',
-                    color: '#fff',
-                    boxShadow: '0 8px 30px rgba(124,58,237,0.5)',
+                    left: `calc(50% + ${x}px)`,
+                    top:  `calc(50% + ${y}px)`,
+                    transform: 'translate(-50%, -50%)',
                   }}
                 >
-                  <Sparkles size={15} /> Start Exploring
-                </motion.button>
+                  <motion.button
+                    onClick={() => setActive(idx)}
+                    whileHover={{ scale: 1.25 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="font-black tracking-[0.18em] uppercase whitespace-nowrap px-2 py-1 rounded-lg transition-colors duration-300"
+                    style={{
+                      fontSize: 13,
+                      color: isActive ? color : 'rgba(255,255,255,0.50)',
+                      textShadow: isActive ? `0 0 22px ${color}` : 'none',
+                      background: isActive ? `${color}15` : 'transparent',
+                      border: `1px solid ${isActive ? color + '40' : 'transparent'}`,
+                    }}
+                  >
+                    {name}
+                  </motion.button>
+                </div>
+              );
+            })}
 
-                <Link
-                  href="/browse"
-                  className="inline-flex items-center gap-2 text-sm tracking-widest uppercase font-bold px-8 py-4 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur transition-all"
+            {/* ── Central premium badge ── */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, scale: 0.75, rotate: -8 }}
+                  animate={{ opacity: 1, scale: 1,    rotate: 0  }}
+                  exit={{    opacity: 0, scale: 1.15, rotate: 8  }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="relative"
                 >
-                  Browse Library <ArrowRight size={14} />
+                  {/* Outer glow pulse */}
+                  <motion.div
+                    animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.15, 0.5] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute -inset-4 rounded-[22px]"
+                    style={{ background: genre.color, filter: 'blur(16px)' }}
+                  />
+                  {/* Badge */}
+                  <div
+                    className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
+                      boxShadow: `0 8px 32px rgba(79,70,229,0.6), 0 0 0 1px rgba(255,255,255,0.1) inset`,
+                      border: `2px solid ${genre.color}50`,
+                    }}
+                  >
+                    <div className="absolute top-0 inset-x-0 h-10 rounded-t-[20px]"
+                      style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%)' }} />
+                    <svg width="42" height="42" viewBox="0 0 21 21" fill="none">
+                      <rect x="3.5" y="2.5"  width="4"    height="16"  rx="1.8" fill="white"/>
+                      <rect x="3.5" y="2.5"  width="14"   height="4"   rx="1.8" fill="white"/>
+                      <rect x="3.5" y="11"   width="9.5"  height="3.2" rx="1.5" fill="rgba(255,255,255,0.82)"/>
+                      <rect x="5"   y="19.2" width="8"    height="1.2" rx="0.6" fill="rgba(255,255,255,0.22)"/>
+                      <rect x="5.5" y="17.8" width="6.5"  height="1"   rx="0.5" fill="rgba(255,255,255,0.14)"/>
+                    </svg>
+                    <div className="absolute bottom-0 inset-x-0 h-8"
+                      style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.3) 0%,transparent 100%)' }} />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Micro tagline */}
+          <p className="text-white/40 text-[10px] font-bold tracking-[0.45em] uppercase mb-3">
+            A Digital Library Experience
+          </p>
+
+          {/* Main title */}
+          <h1
+            className="font-display font-black italic text-white leading-none mb-3 select-none"
+            style={{
+              fontSize: 'clamp(52px, 9vw, 96px)',
+              textShadow: '0 4px 40px rgba(0,0,0,0.7)',
+            }}
+          >
+            Fable
+          </h1>
+
+          {/* Genre tagline — changes with active */}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={active}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0  }}
+              exit={{    opacity: 0, y: -12}}
+              transition={{ duration: 0.4 }}
+              className="text-sm font-medium tracking-[0.3em] uppercase mb-8 italic"
+              style={{ color: genre.color, textShadow: `0 0 20px ${genre.color}50` }}
+            >
+              {genre.tagline}
+            </motion.p>
+          </AnimatePresence>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Link
+                  href={`/browse?genre=${genre.name}`}
+                  className="inline-flex items-center gap-2 font-black text-xs tracking-widest uppercase px-8 py-3.5 rounded-full transition-all hover:scale-105"
+                  style={{
+                    background: genre.color,
+                    color: '#0f0e17',
+                    boxShadow: `0 8px 30px ${genre.color}50`,
+                  }}
+                >
+                  Explore {genre.name} <ArrowRight size={13} />
                 </Link>
               </motion.div>
-
-              {/* Scroll hint */}
-              <motion.div
-                className="mt-10 flex flex-col items-center gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-              >
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5"
-                >
-                  <div className="w-1 h-2 rounded-full bg-white/40" />
-                </motion.div>
-                <p className="text-white/25 text-[10px] tracking-widest uppercase">Click to explore</p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ══ LAYER 7 — Genre wheel content ══ */}
-        <AnimatePresence>
-          {!showWelcome && (
-            <motion.div
-              key="genre-content"
-              className="relative flex-1 flex flex-col items-center justify-center text-center z-[10] px-6 py-32"
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1,  scale: 1    }}
-              exit={{    opacity: 0              }}
-              transition={{ duration: 0.7 }}
-              style={{
-                x: txX, y: txY,
-                rotateX: tiltX,
-                rotateY: tiltY,
-                transformStyle: 'preserve-3d',
-              }}
+            </AnimatePresence>
+            <Link
+              href="/browse"
+              className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-bold px-8 py-3.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur transition-all"
             >
-              {/* Circular genre wheel */}
-              <div className="relative mb-6" style={{ width: 380, height: 380 }}>
-
-                {/* Spinning dashed ring */}
-                <motion.svg
-                  viewBox="0 0 380 380"
-                  className="absolute inset-0 w-full h-full pointer-events-none"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
-                >
-                  <circle cx="190" cy="190" r="158" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"   strokeDasharray="4 14" />
-                  <circle cx="190" cy="190" r="128" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-                </motion.svg>
-
-                {/* Genre labels */}
-                {labelPositions.map(({ name, color, x, y, i: idx }) => {
-                  const isActive = active === idx;
-                  return (
-                    <div
-                      key={name}
-                      className="absolute"
-                      style={{
-                        left: `calc(50% + ${x}px)`,
-                        top:  `calc(50% + ${y}px)`,
-                        transform: 'translate(-50%,-50%)',
-                      }}
-                    >
-                      <motion.button
-                        onClick={() => setActive(idx)}
-                        whileHover={{ scale: 1.25 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="font-black tracking-[0.18em] uppercase whitespace-nowrap px-2 py-1 rounded-lg transition-colors duration-300"
-                        style={{
-                          fontSize: 13,
-                          color: isActive ? color : 'rgba(255,255,255,0.50)',
-                          textShadow: isActive ? `0 0 22px ${color}` : 'none',
-                          background: isActive ? `${color}15` : 'transparent',
-                          border: `1px solid ${isActive ? color + '40' : 'transparent'}`,
-                        }}
-                      >
-                        {name}
-                      </motion.button>
-                    </div>
-                  );
-                })}
-
-                {/* Central badge */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={active}
-                      initial={{ opacity: 0, scale: 0.75, rotate: -8 }}
-                      animate={{ opacity: 1, scale: 1,    rotate: 0  }}
-                      exit={{    opacity: 0, scale: 1.15, rotate: 8  }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className="relative"
-                    >
-                      <motion.div
-                        animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.15, 0.5] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                        className="absolute -inset-4 rounded-[22px]"
-                        style={{ background: genre.color, filter: 'blur(16px)' }}
-                      />
-                      <div
-                        className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden"
-                        style={{
-                          background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
-                          boxShadow: `0 8px 32px rgba(79,70,229,0.6), 0 0 0 1px rgba(255,255,255,0.1) inset`,
-                          border: `2px solid ${genre.color}50`,
-                        }}
-                      >
-                        <div className="absolute top-0 inset-x-0 h-10 rounded-t-[20px]"
-                          style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%)' }} />
-                        <svg width="42" height="42" viewBox="0 0 21 21" fill="none">
-                          <rect x="3.5" y="2.5"  width="4"    height="16"  rx="1.8" fill="white"/>
-                          <rect x="3.5" y="2.5"  width="14"   height="4"   rx="1.8" fill="white"/>
-                          <rect x="3.5" y="11"   width="9.5"  height="3.2" rx="1.5" fill="rgba(255,255,255,0.82)"/>
-                        </svg>
-                        <div className="absolute bottom-0 inset-x-0 h-8"
-                          style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.3) 0%,transparent 100%)' }} />
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              {/* Micro tagline */}
-              <p className="text-white/40 text-[10px] font-bold tracking-[0.45em] uppercase mb-3">
-                A Digital Library Experience
-              </p>
-
-              {/* Main title */}
-              <h1
-                className="font-display font-black italic text-white leading-none mb-3 select-none"
-                style={{
-                  fontSize: 'clamp(52px, 9vw, 96px)',
-                  textShadow: '0 4px 40px rgba(0,0,0,0.7)',
-                }}
-              >
-                Fable
-              </h1>
-
-              {/* Genre tagline */}
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={active}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0  }}
-                  exit={{    opacity: 0, y: -12}}
-                  transition={{ duration: 0.4 }}
-                  className="text-sm font-medium tracking-[0.3em] uppercase mb-8 italic"
-                  style={{ color: genre.color, textShadow: `0 0 20px ${genre.color}50` }}
-                >
-                  {genre.tagline}
-                </motion.p>
-              </AnimatePresence>
-
-              {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <motion.div whileHover={{ scale: 1.06, y: -2 }} whileTap={{ scale: 0.96 }}>
-                      <Link
-                        href={`/browse?genre=${genre.name}`}
-                        className="inline-flex items-center gap-2 font-black text-xs tracking-widest uppercase px-8 py-3.5 rounded-full transition-all"
-                        style={{
-                          background: genre.color,
-                          color: '#0f0e17',
-                          boxShadow: `0 8px 30px ${genre.color}50`,
-                        }}
-                      >
-                        Explore {genre.name} <ArrowRight size={13} />
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                </AnimatePresence>
-
-                <motion.div whileHover={{ scale: 1.06, y: -2 }} whileTap={{ scale: 0.96 }}>
-                  <Link
-                    href="/browse"
-                    className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-bold px-8 py-3.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur transition-all"
-                  >
-                    Browse All
-                  </Link>
-                </motion.div>
-              </div>
-
-              {/* Back to welcome */}
-              <motion.button
-                onClick={() => { setShowWelcome(true); setCountdown(5); }}
-                className="mt-6 text-white/25 hover:text-white/50 text-[10px] tracking-widest uppercase transition-colors"
-                whileHover={{ scale: 1.05 }}
-              >
-                ← Welcome Screen
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              Browse All
+            </Link>
+          </div>
+        </motion.div>
 
         {/* ══ Stats bar ══ */}
         <div className="relative z-[15] border-t border-white/10 bg-black/35 backdrop-blur-md">
@@ -624,7 +373,6 @@ export default function HeroSlider() {
             </div>
           </div>
         </div>
-
       </section>
     </>
   );
