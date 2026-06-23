@@ -180,8 +180,8 @@ export default function Navbar() {
                 href={getDashboardLink()}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive('/dashboard')
-                    ? 'text-indigo-600 bg-indigo-50'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? scrolled ? 'text-indigo-600 bg-indigo-50' : 'text-white bg-white/10'
+                    : scrolled ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
                 Dashboard
