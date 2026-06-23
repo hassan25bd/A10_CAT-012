@@ -544,7 +544,7 @@ export default function HeroSlider() {
             })}
 
             {/* ── Central 3D badge ── */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center" style={{ pointerEvents: 'none' }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}
@@ -568,18 +568,33 @@ export default function HeroSlider() {
                     animate={{ scale: [1, 1.5, 1], opacity: [0.18, 0, 0.18] }}
                     transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
                   />
-                  {/* Badge */}
+                  {/* Badge — clickable, shuffles genre positions */}
                   <motion.div
-                    className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden"
+                    className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden cursor-pointer"
                     style={{
                       background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
                       boxShadow: `0 8px 32px rgba(79,70,229,0.65), 0 0 0 1px rgba(255,255,255,0.12) inset`,
                       border: `2px solid ${genre.color}55`,
+                      pointerEvents: 'auto',
                     }}
                     animate={{ rotateY: [0, 5, 0, -5, 0], rotateX: [0, -3, 0, 3, 0] }}
                     transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.14 }}
-                    whileTap={{ scale: 0.92 }}
+                    whileHover={{ scale: 1.18, boxShadow: `0 12px 40px rgba(79,70,229,0.85), 0 0 0 2px ${genre.color}80 inset` }}
+                    whileTap={{ scale: 0.88, rotateZ: 15 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const rect = containerRef.current?.getBoundingClientRect();
+                      if (rect) {
+                        const cx = rect.left + rect.width / 2;
+                        const cy = rect.top + rect.height * 0.38;
+                        spawnSparks(cx, cy, genre.color);
+                        spawnSparks(cx - 20, cy + 20, '#a78bfa');
+                        spawnSparks(cx + 20, cy - 10, '#60a5fa');
+                      }
+                      shufflePositions();
+                      // Also cycle to next genre
+                      setActive(prev => (prev + 1) % GENRES.length);
+                    }}
                   >
                     <div className="absolute top-0 inset-x-0 h-10 rounded-t-[20px]"
                       style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.18) 0%,transparent 100%)' }} />
