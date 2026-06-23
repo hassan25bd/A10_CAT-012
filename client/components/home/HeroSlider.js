@@ -277,11 +277,26 @@ export default function HeroSlider() {
   }, []);
 
   const genre = GENRES[active];
+
+  /* ── Shuffleable orbital positions ── */
+  const [posOrder, setPosOrder] = useState(() => GENRES.map((_, i) => i));
+
+  const shufflePositions = useCallback(() => {
+    setPosOrder(prev => {
+      const arr = [...prev];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    });
+  }, []);
+
   const R = 158;
-  const labelPositions = GENRES.map((g, i) => {
+  const BASE_POS = GENRES.map((_, i) => {
     const angle = (i / GENRES.length) * 360 - 90;
-    const rad = angle * Math.PI / 180;
-    return { ...g, i, x: Math.cos(rad) * R, y: Math.sin(rad) * R };
+    const rad   = angle * Math.PI / 180;
+    return { x: Math.cos(rad) * R, y: Math.sin(rad) * R };
   });
 
   return (
@@ -483,42 +498,48 @@ export default function HeroSlider() {
               <circle cx="190" cy="190" r="100" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" strokeDasharray="2 18" />
             </motion.svg>
 
-            {/* Genre labels */}
-            {labelPositions.map(({ name, color, x, y, i: idx }) => {
-              const isActive = active === idx;
+            {/* Genre labels — spring to new orbital slots on every click */}
+            {GENRES.map((g, i) => {
+              const { x, y } = BASE_POS[posOrder[i]];
+              const isActive  = active === i;
               return (
-                <div
-                  key={name}
+                <motion.div
+                  key={g.name}
                   className="absolute"
-                  style={{
-                    left: `calc(50% + ${x}px)`,
-                    top:  `calc(50% + ${y}px)`,
-                    transform: 'translate(-50%,-50%)',
+                  style={{ left: '50%', top: '50%' }}
+                  initial={false}
+                  animate={{ x, y }}
+                  transition={{
+                    type: 'spring', stiffness: 220, damping: 22, mass: 0.7,
+                    delay: i * 0.025,
                   }}
                 >
-                  <motion.button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActive(idx);
-                      spawnSparks(e.clientX, e.clientY, color);
-                      setReaction(null);
-                      setTimeout(() => setReaction({ name: name, color }), 50);
-                    }}
-                    whileHover={{ scale: 1.35 }}
-                    whileTap={{ scale: 0.85 }}
-                    className="font-black tracking-[0.18em] uppercase whitespace-nowrap px-2 py-1 rounded-lg"
-                    style={{
-                      fontSize: 13,
-                      color: isActive ? color : 'rgba(255,255,255,0.50)',
-                      textShadow: isActive ? `0 0 22px ${color}` : 'none',
-                      background: isActive ? `${color}15` : 'transparent',
-                      border: `1px solid ${isActive ? color + '40' : 'transparent'}`,
-                      transition: 'color 0.3s, background 0.3s, text-shadow 0.3s, border-color 0.3s',
-                    }}
-                  >
-                    {name}
-                  </motion.button>
-                </div>
+                  <div style={{ transform: 'translate(-50%,-50%)' }}>
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActive(i);
+                        spawnSparks(e.clientX, e.clientY, g.color);
+                        setReaction(null);
+                        setTimeout(() => setReaction({ name: g.name, color: g.color }), 50);
+                        shufflePositions();
+                      }}
+                      whileHover={{ scale: 1.35 }}
+                      whileTap={{ scale: 0.85 }}
+                      className="font-black tracking-[0.18em] uppercase whitespace-nowrap px-2 py-1 rounded-lg"
+                      style={{
+                        fontSize: 13,
+                        color: isActive ? g.color : 'rgba(255,255,255,0.50)',
+                        textShadow: isActive ? `0 0 22px ${g.color}` : 'none',
+                        background: isActive ? `${g.color}15` : 'transparent',
+                        border: `1px solid ${isActive ? g.color + '40' : 'transparent'}`,
+                        transition: 'color 0.3s, background 0.3s, text-shadow 0.3s, border-color 0.3s',
+                      }}
+                    >
+                      {g.name}
+                    </motion.button>
+                  </div>
+                </motion.div>
               );
             })}
 
