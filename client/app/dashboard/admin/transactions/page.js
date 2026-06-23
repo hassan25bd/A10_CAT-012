@@ -36,7 +36,7 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        <div className="glass rounded-2xl border border-gray-700/50 p-6">
+        <div className="rounded-2xl p-6" style={{ background: 'rgba(20,8,14,0.92)', border: '1px solid rgba(255,255,255,0.08)' }}>
           {isLoading ? (
             <SkeletonTable rows={6} cols={6} />
           ) : (
