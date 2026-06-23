@@ -402,71 +402,89 @@ export default function HeroSlider() {
               );
             })}
 
-            {/* ── Central 3D badge ── */}
+            {/* ── Central genre card ── */}
             <div className="absolute inset-0 flex items-center justify-center" style={{ pointerEvents: 'none' }}>
+
+              {/* Outer glow pulse — always visible, color-matched */}
+              <motion.div
+                className="absolute rounded-full pointer-events-none"
+                style={{ width: 160, height: 160, background: genre.color, filter: 'blur(32px)', opacity: 0.18 }}
+                animate={{ scale: [1, 1.35, 1], opacity: [0.18, 0.05, 0.18] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              />
+
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}
-                  initial={{ opacity: 0, scale: 0.65, rotateY: -35, rotateX: 18 }}
-                  animate={{ opacity: 1, scale: 1,    rotateY: 0,   rotateX: 0  }}
-                  exit={{    opacity: 0, scale: 1.12, rotateY: 35               }}
-                  transition={{ duration: 0.55, ease: 'easeOut' }}
-                  className="relative"
-                  style={{ transformStyle: 'preserve-3d' }}
+                  className="relative flex flex-col items-center justify-center gap-1 cursor-pointer select-none"
+                  style={{
+                    width: 136, height: 136,
+                    borderRadius: 28,
+                    background: `linear-gradient(145deg, ${genre.color}22, ${genre.color}08)`,
+                    border: `1.5px solid ${genre.color}50`,
+                    backdropFilter: 'blur(18px)',
+                    boxShadow: `0 0 0 6px ${genre.color}10, 0 12px 40px rgba(0,0,0,0.45)`,
+                    pointerEvents: 'auto',
+                  }}
+                  initial={{ scale: 0.4, opacity: 0, rotateY: -120 }}
+                  animate={{ scale: 1,   opacity: 1, rotateY: 0     }}
+                  exit={{    scale: 0.4, opacity: 0, rotateY:  120  }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                  whileHover={{ scale: 1.10, boxShadow: `0 0 0 8px ${genre.color}18, 0 16px 48px rgba(0,0,0,0.5)` }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const rect = containerRef.current?.getBoundingClientRect();
+                    if (rect) {
+                      const cx = rect.left + rect.width / 2;
+                      const cy = rect.top + rect.height * 0.38;
+                      spawnSparks(cx, cy, genre.color);
+                      spawnSparks(cx - 18, cy + 18, '#a78bfa');
+                      spawnSparks(cx + 18, cy - 12, '#60a5fa');
+                    }
+                    shufflePositions();
+                    setActive(prev => (prev + 1) % GENRES.length);
+                  }}
                 >
-                  {/* Double glow pulse */}
-                  <motion.div
-                    className="absolute -inset-5 rounded-[24px]"
-                    style={{ background: genre.color, filter: 'blur(18px)' }}
-                    animate={{ scale: [1, 1.22, 1], opacity: [0.55, 0.12, 0.55] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                  />
-                  <motion.div
-                    className="absolute -inset-9 rounded-[28px]"
-                    style={{ background: genre.color, filter: 'blur(26px)' }}
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.18, 0, 0.18] }}
-                    transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
-                  />
-                  {/* Badge — clickable, shuffles genre positions */}
-                  <motion.div
-                    className="relative w-20 h-20 rounded-[20px] flex items-center justify-center overflow-hidden cursor-pointer"
-                    style={{
-                      background: 'linear-gradient(155deg,#1e1b4b 0%,#3730a3 38%,#4f46e5 65%,#7c3aed 100%)',
-                      boxShadow: `0 8px 32px rgba(79,70,229,0.65), 0 0 0 1px rgba(255,255,255,0.12) inset`,
-                      border: `2px solid ${genre.color}55`,
-                      pointerEvents: 'auto',
-                    }}
-                    animate={{ rotateY: [0, 5, 0, -5, 0], rotateX: [0, -3, 0, 3, 0] }}
-                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.18, boxShadow: `0 12px 40px rgba(79,70,229,0.85), 0 0 0 2px ${genre.color}80 inset` }}
-                    whileTap={{ scale: 0.88, rotateZ: 15 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const rect = containerRef.current?.getBoundingClientRect();
-                      if (rect) {
-                        const cx = rect.left + rect.width / 2;
-                        const cy = rect.top + rect.height * 0.38;
-                        spawnSparks(cx, cy, genre.color);
-                        spawnSparks(cx - 20, cy + 20, '#a78bfa');
-                        spawnSparks(cx + 20, cy - 10, '#60a5fa');
-                      }
-                      shufflePositions();
-                      // Also cycle to next genre
-                      setActive(prev => (prev + 1) % GENRES.length);
-                    }}
+                  {/* Shimmer top */}
+                  <div className="absolute top-0 inset-x-0 h-12 rounded-t-[28px] pointer-events-none"
+                    style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.14) 0%,transparent 100%)' }} />
+
+                  {/* Fable logo mark */}
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <div className="w-4 h-4 rounded-[4px] flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg,#4f46e5,#7c3aed)', boxShadow: `0 2px 8px ${genre.color}50` }}>
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <rect x="1.5" y="1" width="2" height="8" rx="0.8" fill="white"/>
+                        <rect x="1.5" y="1" width="7" height="2" rx="0.8" fill="white"/>
+                        <rect x="1.5" y="5" width="4.5" height="1.5" rx="0.7" fill="rgba(255,255,255,0.75)"/>
+                      </svg>
+                    </div>
+                    <span className="text-white/40 font-black tracking-[0.2em] uppercase" style={{ fontSize: 7 }}>Fable</span>
+                  </div>
+
+                  {/* Genre emoji */}
+                  <motion.span
+                    style={{ fontSize: 36, lineHeight: 1 }}
+                    animate={{ y: [0, -5, 0], rotate: [0, 6, -4, 0] }}
+                    transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
                   >
-                    <div className="absolute top-0 inset-x-0 h-10 rounded-t-[20px]"
-                      style={{ background: 'linear-gradient(180deg,rgba(255,255,255,0.18) 0%,transparent 100%)' }} />
-                    <svg width="42" height="42" viewBox="0 0 21 21" fill="none">
-                      <rect x="3.5" y="2.5"  width="4"    height="16"  rx="1.8" fill="white"/>
-                      <rect x="3.5" y="2.5"  width="14"   height="4"   rx="1.8" fill="white"/>
-                      <rect x="3.5" y="11"   width="9.5"  height="3.2" rx="1.5" fill="rgba(255,255,255,0.82)"/>
-                      <rect x="5"   y="19.2" width="8"    height="1.2" rx="0.6" fill="rgba(255,255,255,0.22)"/>
-                      <rect x="5.5" y="17.8" width="6.5"  height="1"   rx="0.5" fill="rgba(255,255,255,0.14)"/>
-                    </svg>
-                    <div className="absolute bottom-0 inset-x-0 h-8"
-                      style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.3) 0%,transparent 100%)' }} />
-                  </motion.div>
+                    {genre.emoji}
+                  </motion.span>
+
+                  {/* Genre name */}
+                  <p className="font-black tracking-wide leading-none" style={{ fontSize: 13, color: genre.color, textShadow: `0 0 16px ${genre.color}80` }}>
+                    {genre.name}
+                  </p>
+
+                  {/* Tagline */}
+                  <p className="text-white/45 text-center leading-tight px-2" style={{ fontSize: 9 }}>
+                    {genre.tagline}
+                  </p>
+
+                  {/* Bottom shadow */}
+                  <div className="absolute bottom-0 inset-x-0 h-8 rounded-b-[28px] pointer-events-none"
+                    style={{ background: 'linear-gradient(0deg,rgba(0,0,0,0.25) 0%,transparent 100%)' }} />
                 </motion.div>
               </AnimatePresence>
             </div>
