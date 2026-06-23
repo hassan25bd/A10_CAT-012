@@ -46,18 +46,25 @@ export default function WriterDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="stat-card">
-              <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="rounded-2xl p-6 flex flex-col gap-3 border border-white/8"
+              style={{ background: 'linear-gradient(135deg,rgba(99,102,241,0.12) 0%,rgba(139,92,246,0.08) 100%)', backdropFilter: 'blur(12px)' }}
+            >
+              <div className={`w-11 h-11 rounded-xl ${stat.bg} flex items-center justify-center`}>
                 <stat.icon size={20} className={stat.color} />
               </div>
-              <p className="text-2xl font-bold text-white">{stat.value}</p>
-              <p className="text-gray-400 text-sm">{stat.label}</p>
+              <p className="text-3xl font-black text-white">{stat.value}</p>
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">{stat.label}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Recent Ebooks */}
-        <div className="glass rounded-2xl border border-gray-700/50 p-6 mb-6">
+        <div className="rounded-2xl border border-white/8 p-6 mb-6"
+          style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.04) 0%,rgba(99,102,241,0.06) 100%)', backdropFilter: 'blur(12px)' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-white font-semibold">My Recent Ebooks</h2>
             <Link href="/dashboard/writer/ebooks" className="text-xs text-primary-400 hover:text-primary-300">View all →</Link>
@@ -71,19 +78,25 @@ export default function WriterDashboard() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead><tr><th>Title</th><th>Price</th><th>Status</th><th>Sales</th></tr></thead>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    {['Title','Price','Status','Sales'].map(h => (
+                      <th key={h} className="text-left text-gray-500 font-medium py-3 px-4 border-b border-white/8">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
                 <tbody>
                   {ebooks.slice(0, 5).map((eb) => (
-                    <tr key={eb._id}>
-                      <td className="font-medium text-white">{eb.title}</td>
-                      <td className="text-gold-400">${Number(eb.price).toFixed(2)}</td>
-                      <td>
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${eb.status === 'published' ? 'bg-green-500/15 text-green-300' : 'bg-yellow-500/15 text-yellow-300'}`}>
+                    <tr key={eb._id} className="hover:bg-white/4 transition-colors">
+                      <td className="py-3 px-4 font-medium text-white border-b border-white/5">{eb.title}</td>
+                      <td className="py-3 px-4 text-amber-400 font-bold border-b border-white/5">${Number(eb.price).toFixed(2)}</td>
+                      <td className="py-3 px-4 border-b border-white/5">
+                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${eb.status === 'published' ? 'bg-green-500/20 text-green-300 border border-green-500/20' : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/20'}`}>
                           {eb.status}
                         </span>
                       </td>
-                      <td>{eb.salesCount}</td>
+                      <td className="py-3 px-4 text-gray-300 border-b border-white/5">{eb.salesCount}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -93,7 +106,8 @@ export default function WriterDashboard() {
         </div>
 
         {/* Recent Sales */}
-        <div className="glass rounded-2xl border border-gray-700/50 p-6">
+        <div className="rounded-2xl border border-white/8 p-6"
+          style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.04) 0%,rgba(99,102,241,0.06) 100%)', backdropFilter: 'blur(12px)' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-white font-semibold">Recent Sales</h2>
             <Link href="/dashboard/writer/sales" className="text-xs text-primary-400 hover:text-primary-300">View all →</Link>
@@ -104,15 +118,21 @@ export default function WriterDashboard() {
             <p className="text-gray-500 text-sm text-center py-8">No sales yet. Keep publishing!</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead><tr><th>Ebook</th><th>Buyer</th><th>Amount</th><th>Date</th></tr></thead>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    {['Ebook','Buyer','Amount','Date'].map(h => (
+                      <th key={h} className="text-left text-gray-500 font-medium py-3 px-4 border-b border-white/8">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
                 <tbody>
                   {sales.slice(0, 5).map((s) => (
-                    <tr key={s._id}>
-                      <td className="text-white font-medium">{s.ebook?.title}</td>
-                      <td>{s.user?.name || s.user?.email}</td>
-                      <td className="text-gold-400">${Number(s.amount).toFixed(2)}</td>
-                      <td>{new Date(s.createdAt).toLocaleDateString()}</td>
+                    <tr key={s._id} className="hover:bg-white/4 transition-colors">
+                      <td className="py-3 px-4 text-white font-medium border-b border-white/5">{s.ebook?.title}</td>
+                      <td className="py-3 px-4 text-gray-400 border-b border-white/5">{s.user?.name || s.user?.email}</td>
+                      <td className="py-3 px-4 text-amber-400 font-bold border-b border-white/5">${Number(s.amount).toFixed(2)}</td>
+                      <td className="py-3 px-4 text-gray-400 border-b border-white/5">{new Date(s.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>

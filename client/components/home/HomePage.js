@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import { BookOpen, ArrowRight, Sparkles, Library, TrendingUp } from 'lucide-react';
+import { BookOpen, ArrowRight, Sparkles, Library, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState, useCallback } from 'react';
 import API from '../../lib/api';
@@ -294,11 +294,18 @@ function WriterCTA() {
 export default function HomePage() {
   const router = useRouter();
   const sectionRef = useRef(null);
+  const carouselRef = useRef(null);
 
   const { data: featured = [], isLoading } = useQuery({
     queryKey: ['featured'],
     queryFn: () => API.get('/ebooks/featured').then((r) => r.data),
   });
+
+  const scrollCarousel = (dir) => {
+    if (!carouselRef.current) return;
+    const amount = carouselRef.current.offsetWidth * 0.75;
+    carouselRef.current.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  };
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
   const y1 = useTransform(scrollYProgress, [0, 1], [60, -60]);
@@ -430,25 +437,67 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          {/* Card grid with staggered 3D entrance */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isLoading
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden bg-white/5 animate-pulse h-80" />
-                ))
-              : featured.map((ebook, i) => (
-                  <motion.div
-                    key={ebook._id}
-                    initial={{ opacity: 0, y: 50, rotateX: 8 }}
-                    whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    transition={{ duration: 0.55, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    <EbookCard ebook={ebook} index={i} dark />
-                  </motion.div>
-                ))}
+          {/* Carousel with arrow buttons */}
+          <div className="relative">
+            {/* Left arrow */}
+            <motion.button
+              onClick={() => scrollCarousel(-1)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.92 }}
+              className="absolute -left-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                boxShadow: '0 0 24px rgba(99,102,241,0.5)',
+              }}
+            >
+              <ChevronLeft size={22} className="text-white" />
+            </motion.button>
+
+            {/* Right arrow */}
+            <motion.button
+              onClick={() => scrollCarousel(1)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.92 }}
+              className="absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                boxShadow: '0 0 24px rgba(99,102,241,0.5)',
+              }}
+            >
+              <ChevronRight size={22} className="text-white" />
+            </motion.button>
+
+            {/* Side fade masks */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to right,rgba(3,4,15,0.8),transparent)' }} />
+            <div className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to left,rgba(3,4,15,0.8),transparent)' }} />
+
+            {/* Scrollable track */}
+            <div
+              ref={carouselRef}
+              className="flex gap-6 overflow-x-auto pb-4"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <style>{`.carousel-track::-webkit-scrollbar{display:none}`}</style>
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex-none w-72 rounded-2xl overflow-hidden bg-white/5 animate-pulse h-80" />
+                  ))
+                : featured.map((ebook, i) => (
+                    <motion.div
+                      key={ebook._id}
+                      className="flex-none w-72"
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: i * 0.07 }}
+                      whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                    >
+                      <EbookCard ebook={ebook} index={i} dark />
+                    </motion.div>
+                  ))}
+            </div>
           </div>
 
           {!isLoading && featured.length === 0 && (
