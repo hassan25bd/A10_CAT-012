@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
-        // writer name search handled via populate below
       ];
     }
     if (genre) filter.genre = genre;
@@ -29,22 +28,24 @@ router.get('/', async (req, res) => {
     if (sort === 'price_asc') sortObj = { price: 1 };
     if (sort === 'price_desc') sortObj = { price: -1 };
 
-    const skip = (Number(page) - 1) * Number(limit);
-    const total = await Ebook.countDocuments(filter);
-
-    let ebooks = await Ebook.find(filter)
+    // Fetch all matching ebooks (unpaginated) for writer-name search, then paginate in memory
+    let allEbooks = await Ebook.find(filter)
       .populate('writer', 'name avatar')
-      .sort(sortObj)
-      .skip(skip)
-      .limit(Number(limit));
+      .sort(sortObj);
 
+    // Apply writer-name filter after populate
     if (search) {
-      ebooks = ebooks.filter(
+      const q = search.toLowerCase();
+      allEbooks = allEbooks.filter(
         (e) =>
-          e.title.toLowerCase().includes(search.toLowerCase()) ||
-          e.writer?.name?.toLowerCase().includes(search.toLowerCase())
+          e.title.toLowerCase().includes(q) ||
+          e.writer?.name?.toLowerCase().includes(q)
       );
     }
+
+    const total = allEbooks.length;
+    const skip = (Number(page) - 1) * Number(limit);
+    const ebooks = allEbooks.slice(skip, skip + Number(limit));
 
     res.json({ ebooks, total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
   } catch (err) {

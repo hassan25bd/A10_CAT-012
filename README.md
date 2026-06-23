@@ -3,7 +3,7 @@
 A full-stack ebook sharing platform connecting readers with talented writers. Built with the MERN stack + Next.js.
 
 ## Live URL
-[https://fable-ebooks.vercel.app](https://fable-ebooks.vercel.app) *(update after deployment)*
+[https://fable-ebooks.vercel.app](https://fable-ebooks.vercel.app)
 
 ## Admin Credentials
 - **Email:** admin@fable.com
@@ -136,6 +136,10 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 | POST | /api/stripe/checkout | Create Stripe session |
 | GET | /api/stripe/verify/:id | Verify payment |
 
+## GitHub Repositories
+
+- **Full Project (client + server):** [https://github.com/hassan25bd/A10_CAT-012](https://github.com/hassan25bd/A10_CAT-012)
+
 ## Deployment
 
 ### Client → Vercel
@@ -150,6 +154,4 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 3. Set environment variables
 4. Deploy and copy URL to `CLIENT_URL`
 
-## Commit History
-- At least 20 meaningful commits on client side
-- At least 12 meaningful commits on server side
+
