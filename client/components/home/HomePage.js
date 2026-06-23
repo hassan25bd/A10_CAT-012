@@ -507,10 +507,35 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Bottom fade into next section */}
+          {/* ── Row 2: Auto-scrolling marquee (reverse direction) ── */}
+          {!isLoading && featured.length > 0 && (
+            <div className="mt-6 relative overflow-hidden">
+              {/* Side fade masks */}
+              <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+                style={{ background: 'linear-gradient(to right,rgba(3,4,15,1),transparent)' }} />
+              <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+                style={{ background: 'linear-gradient(to left,rgba(3,4,15,1),transparent)' }} />
+
+              <motion.div
+                className="flex gap-5"
+                style={{ width: 'max-content' }}
+                animate={{ x: ['0%', `-${100 / 2}%`] }}
+                transition={{ duration: featured.length * 4, repeat: Infinity, ease: 'linear' }}
+              >
+                {/* Duplicate the array for seamless loop */}
+                {[...featured, ...featured].map((ebook, i) => (
+                  <div key={`${ebook._id}-${i}`} className="flex-none w-60 opacity-70 hover:opacity-100 transition-opacity">
+                    <EbookCard ebook={ebook} index={i} dark />
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          )}
+
+          {/* Bottom fade into next section — dark version */}
           <div
-            className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom,transparent,#ffffff)' }}
+            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom,transparent,#060312)' }}
           />
         </div>
       </section>
