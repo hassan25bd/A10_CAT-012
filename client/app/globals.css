@@ -5,16 +5,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
+  --primary: #e11d48;
+  --primary-dark: #be123c;
   --gold: #f59e0b;
-  --bg: #F8F7FF;
+  --bg: #fff1f2;
   --surface: #FFFFFF;
-  --surface2: #F0EFFE;
-  --text: #1E1B4B;
+  --surface2: #fecdd3;
+  --text: #1a0a10;
   --text2: #64748b;
   --text3: #94a3b8;
-  --border: #E5E7EB;
+  --border: #fecdd3;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,8 +22,8 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #F8F7FF;
-  color: #1E1B4B;
+  background-color: #fff1f2;
+  color: #1a0a10;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -31,7 +31,7 @@ body {
 
 /* ── Skeleton ── */
 .skeleton {
-  background: linear-gradient(90deg, #f0effe 25%, #e8e5fd 50%, #f0effe 75%);
+  background: linear-gradient(90deg, #fecdd3 25%, #fda4af 50%, #fecdd3 75%);
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
 }
@@ -42,13 +42,13 @@ body {
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f0effe; }
-::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+::-webkit-scrollbar-track { background: #fff1f2; }
+::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #e11d48; }
 
 /* ── Glass ── */
 .glass {
-  background: rgba(26, 24, 48, 0.72);
+  background: rgba(30, 11, 18, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -56,7 +56,7 @@ body {
 
 /* ── Gradient text ── */
 .gradient-text {
-  background: linear-gradient(135deg, #6366f1, #a78bfa, #f59e0b);
+  background: linear-gradient(135deg, #e11d48, #fb7185, #f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -64,10 +64,10 @@ body {
 
 /* ── Buttons ── */
 .btn-primary {
-  @apply bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5;
+  @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:-translate-y-0.5;
 }
 .btn-secondary {
-  @apply bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50 font-semibold px-6 py-3 rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5;
+  @apply bg-white border border-primary-200 text-primary-600 hover:bg-primary-50 font-semibold px-6 py-3 rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5;
 }
 .btn-gold {
   @apply bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg;
@@ -75,7 +75,7 @@ body {
 
 /* ── Input ── */
 .input-field {
-  @apply w-full bg-white border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 rounded-2xl px-4 py-3 outline-none transition-all duration-200;
+  @apply w-full bg-white border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 text-slate-800 placeholder-slate-400 rounded-2xl px-4 py-3 outline-none transition-all duration-200;
 }
 
 /* ── Data Table ── */
@@ -86,16 +86,16 @@ body {
 
 /* ── Stat card ── */
 .stat-card {
-  background: rgba(26, 24, 48, 0.85);
+  background: rgba(30, 11, 18, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(225, 29, 72, 0.18);
   @apply rounded-3xl p-6 flex flex-col gap-2;
 }
 
 /* ── Genre badge ── */
 .genre-badge {
-  @apply text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200;
+  @apply text-xs font-semibold px-2.5 py-1 rounded-full bg-primary-100 text-primary-700 border border-primary-200;
 }
 
 /* ── Card hover ── */
