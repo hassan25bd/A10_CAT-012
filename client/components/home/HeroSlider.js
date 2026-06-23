@@ -51,20 +51,7 @@ export default function HeroSlider() {
   const containerRef  = useRef(null);
   const [active, setActive]         = useState(1);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [countdown, setCountdown]   = useState(5);
   const [cursor, setCursor]         = useState({ x: -200, y: -200, visible: false });
-
-  /* ── auto-advance from welcome → genre wheel ── */
-  useEffect(() => {
-    if (!showWelcome) return;
-    const tick = setInterval(() => {
-      setCountdown(c => {
-        if (c <= 1) { clearInterval(tick); setShowWelcome(false); return 0; }
-        return c - 1;
-      });
-    }, 1000);
-    return () => clearInterval(tick);
-  }, [showWelcome]);
 
   /* ── preload ── */
   useEffect(() => {
@@ -413,33 +400,21 @@ export default function HeroSlider() {
                 </Link>
               </motion.div>
 
-              {/* Auto-advance countdown ring */}
+              {/* Scroll hint */}
               <motion.div
                 className="mt-10 flex flex-col items-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
               >
-                <div className="relative w-10 h-10">
-                  <svg viewBox="0 0 40 40" className="w-full h-full -rotate-90">
-                    <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-                    <motion.circle
-                      cx="20" cy="20" r="16"
-                      fill="none"
-                      stroke="#a78bfa"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeDasharray={`${2 * Math.PI * 16}`}
-                      initial={{ strokeDashoffset: 0 }}
-                      animate={{ strokeDashoffset: 2 * Math.PI * 16 }}
-                      transition={{ duration: 5, ease: 'linear' }}
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-white/60 text-xs font-bold">
-                    {countdown}
-                  </span>
-                </div>
-                <p className="text-white/30 text-[10px] tracking-widest uppercase">Auto exploring</p>
+                <motion.div
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5"
+                >
+                  <div className="w-1 h-2 rounded-full bg-white/40" />
+                </motion.div>
+                <p className="text-white/25 text-[10px] tracking-widest uppercase">Click to explore</p>
               </motion.div>
             </motion.div>
           )}
