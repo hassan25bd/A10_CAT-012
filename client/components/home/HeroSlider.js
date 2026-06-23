@@ -5,14 +5,14 @@ import { motion, useSpring, useTransform, AnimatePresence } from 'framer-motion'
 import { ArrowRight, BookOpen, Star, Users, TrendingUp } from 'lucide-react';
 
 const GENRES = [
-  { name: 'Fiction',   bg: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=85', color: '#60A5FA', tagline: 'Worlds built from words' },
-  { name: 'Mystery',   bg: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920&q=85', color: '#FCD34D', tagline: 'Every clue tells a story' },
-  { name: 'Romance',   bg: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&q=85', color: '#F9A8D4', tagline: 'Hearts in every page' },
-  { name: 'Sci-Fi',    bg: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=1920&q=85', color: '#6EE7B7', tagline: 'Beyond the stars' },
-  { name: 'Fantasy',   bg: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&q=85', color: '#C4B5FD', tagline: 'Magic lives between these lines' },
-  { name: 'Horror',    bg: 'https://images.unsplash.com/photo-1520116468816-95b69f847357?w=1920&q=85', color: '#FCA5A5', tagline: 'Dare to turn the page' },
-  { name: 'Thriller',  bg: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1920&q=85', color: '#FDBA74', tagline: 'Every second counts' },
-  { name: 'Adventure', bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85', color: '#86EFAC', tagline: 'The journey awaits' },
+  { name: 'Fiction',   emoji: '📚', bg: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=85', color: '#60A5FA', tagline: 'Worlds built from words' },
+  { name: 'Mystery',   emoji: '🔍', bg: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920&q=85', color: '#FCD34D', tagline: 'Every clue tells a story' },
+  { name: 'Romance',   emoji: '💝', bg: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&q=85', color: '#F9A8D4', tagline: 'Hearts in every page' },
+  { name: 'Sci-Fi',    emoji: '🚀', bg: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=1920&q=85', color: '#6EE7B7', tagline: 'Beyond the stars' },
+  { name: 'Fantasy',   emoji: '🔮', bg: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&q=85', color: '#C4B5FD', tagline: 'Magic lives between these lines' },
+  { name: 'Horror',    emoji: '💀', bg: 'https://images.unsplash.com/photo-1520116468816-95b69f847357?w=1920&q=85', color: '#FCA5A5', tagline: 'Dare to turn the page' },
+  { name: 'Thriller',  emoji: '⚡', bg: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1920&q=85', color: '#FDBA74', tagline: 'Every second counts' },
+  { name: 'Adventure', emoji: '🗺️', bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85', color: '#86EFAC', tagline: 'The journey awaits' },
 ];
 
 const STATS = [
@@ -34,6 +34,108 @@ const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
 
 let _rippleId = 0;
 
+/* ── 3-second genre popup ── */
+function GenrePopup({ genre, onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3000);
+    return () => clearTimeout(t);
+  }, [genre.name, onDone]);
+
+  const burst = Array.from({ length: 14 }, (_, i) => ({
+    id: i,
+    angle: (i / 14) * 360,
+    dist: 70 + (i % 3) * 30,
+  }));
+
+  return (
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center z-[300] pointer-events-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Emoji burst on entry */}
+      {burst.map(b => (
+        <motion.span
+          key={b.id}
+          className="absolute select-none"
+          style={{ fontSize: 18 }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 0.4 }}
+          animate={{
+            x: Math.cos(b.angle * Math.PI / 180) * b.dist,
+            y: Math.sin(b.angle * Math.PI / 180) * b.dist,
+            opacity: 0, scale: 0,
+          }}
+          transition={{ duration: 0.85, ease: 'easeOut', delay: b.id * 0.02 }}
+        >
+          {genre.emoji}
+        </motion.span>
+      ))}
+
+      {/* Card */}
+      <motion.div
+        className="relative flex flex-col items-center gap-3 px-10 py-8 rounded-[32px] text-center"
+        style={{
+          background: `linear-gradient(145deg, ${genre.color}28, ${genre.color}0d)`,
+          border: `1.5px solid ${genre.color}55`,
+          backdropFilter: 'blur(22px)',
+          boxShadow: `0 0 60px ${genre.color}35, 0 20px 60px rgba(0,0,0,0.45)`,
+          minWidth: 210,
+        }}
+        initial={{ scale: 0.15, rotateY: -180, opacity: 0 }}
+        animate={{ scale: 1,    rotateY: 0,    opacity: 1 }}
+        exit={{    scale: 0.15, rotateY:  180, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 20 }}
+      >
+        {/* Outer glow pulse */}
+        <motion.div
+          className="absolute -inset-6 rounded-[44px] pointer-events-none"
+          style={{ background: genre.color, filter: 'blur(28px)', opacity: 0.16 }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.16, 0.04, 0.16] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        {/* Shimmer */}
+        <div className="absolute inset-0 rounded-[32px] pointer-events-none"
+          style={{ background: 'linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%)' }} />
+
+        {/* Big emoji */}
+        <motion.span
+          style={{ fontSize: 72, lineHeight: 1 }}
+          animate={{ y: [0, -10, 0], rotate: [0, 10, -8, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          {genre.emoji}
+        </motion.span>
+
+        {/* Genre name */}
+        <motion.p
+          className="text-2xl font-black tracking-tight"
+          style={{ color: genre.color, textShadow: `0 0 24px ${genre.color}90` }}
+          animate={{ scale: [1, 1.04, 1] }}
+          transition={{ duration: 1.2, repeat: Infinity }}
+        >
+          {genre.name}
+        </motion.p>
+
+        {/* Tagline */}
+        <p className="text-white/65 text-sm font-medium max-w-[180px] leading-snug">
+          {genre.tagline}
+        </p>
+
+        {/* 3-second countdown bar */}
+        <div className="w-36 h-1.5 rounded-full overflow-hidden" style={{ background: `${genre.color}25` }}>
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: genre.color, boxShadow: `0 0 8px ${genre.color}` }}
+            initial={{ width: '100%' }}
+            animate={{ width: '0%' }}
+            transition={{ duration: 3, ease: 'linear' }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export default function HeroSlider() {
   const containerRef = useRef(null);
@@ -42,6 +144,7 @@ export default function HeroSlider() {
   const [ripples, setRipples]     = useState([]);
   const [sparks,  setSparks]      = useState([]);
   const [ringSpeed, setRingSpeed] = useState(45);
+  const [popup,   setPopup]       = useState(null);
 
   /* ── spring-smoothed pointer (parallax) ── */
   const pCfg   = { stiffness: 28, damping: 16 };
@@ -173,6 +276,13 @@ export default function HeroSlider() {
 
   return (
     <>
+
+      {/* ── Genre popup (3-second auto-dismiss) ── */}
+      <AnimatePresence>
+        {popup && (
+          <GenrePopup key={popup.name} genre={popup} onDone={() => setPopup(null)} />
+        )}
+      </AnimatePresence>
 
       {/* ── glowing cursor dot ── */}
       <div
@@ -382,6 +492,8 @@ export default function HeroSlider() {
                         setActive(i);
                         spawnSparks(e.clientX, e.clientY, g.color);
                         shufflePositions();
+                        setPopup(null);
+                        setTimeout(() => setPopup(g), 40);
                       }}
                       whileHover={{ scale: 1.35 }}
                       whileTap={{ scale: 0.85 }}
