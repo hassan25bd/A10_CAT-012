@@ -34,6 +34,134 @@ const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
 
 let _rippleId = 0;
 
+/* ── Per-genre cartoon reaction data ── */
+const REACTIONS = {
+  Fiction:   { char: '🤓', big: '📚', msg: 'A whole new world!',      confetti: ['📖','✨','🌟','📝'] },
+  Mystery:   { char: '🕵️', big: '🔍', msg: 'Every clue counts...',   confetti: ['🔎','💡','🗝️','❓'] },
+  Romance:   { char: '🥰', big: '💝', msg: 'Love fills the pages!',   confetti: ['💕','🌸','💖','✨'] },
+  'Sci-Fi':  { char: '👾', big: '🚀', msg: 'Blast off to the future!',confetti: ['⭐','🛸','🌙','💫'] },
+  Fantasy:   { char: '🧙', big: '🔮', msg: 'Pure magic awaits!',      confetti: ['✨','🌟','⚡','🦄'] },
+  Horror:    { char: '👻', big: '💀', msg: 'Dare you turn the page?', confetti: ['🕷️','🦇','⚡','💀'] },
+  Thriller:  { char: '😰', big: '🗡️', msg: 'Heart is POUNDING!',     confetti: ['💥','⚡','🔥','😱'] },
+  Adventure: { char: '🤠', big: '🗺️', msg: 'The journey begins!',    confetti: ['🌄','⛰️','🌟','🏕️'] },
+};
+
+/* ── Reaction Popup Component ── */
+function GenreReaction({ genreName, color, onDone }) {
+  const r = REACTIONS[genreName];
+  useEffect(() => {
+    const t = setTimeout(onDone, 2800);
+    return () => clearTimeout(t);
+  }, [genreName, onDone]);
+
+  const confettiItems = Array.from({ length: 16 }, (_, i) => ({
+    id: i,
+    emoji: r.confetti[i % r.confetti.length],
+    angle: (i / 16) * 360,
+    dist: 80 + (i % 3) * 35,
+    delay: (i % 4) * 0.06,
+  }));
+
+  return (
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center z-[300] pointer-events-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Confetti burst */}
+      {confettiItems.map(c => (
+        <motion.span
+          key={c.id}
+          className="absolute text-2xl select-none pointer-events-none"
+          style={{ fontSize: 22 }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 0.5 }}
+          animate={{
+            x: Math.cos(c.angle * Math.PI / 180) * c.dist,
+            y: Math.sin(c.angle * Math.PI / 180) * c.dist,
+            opacity: [1, 1, 0],
+            scale: [0.5, 1.2, 0.8],
+            rotate: [0, 360],
+          }}
+          transition={{ duration: 0.9, delay: c.delay, ease: 'easeOut' }}
+        >
+          {c.emoji}
+        </motion.span>
+      ))}
+
+      {/* Main card */}
+      <motion.div
+        className="relative flex flex-col items-center gap-4 px-10 py-8 rounded-[32px] text-center"
+        style={{
+          background: `linear-gradient(145deg, ${color}25, ${color}10)`,
+          border: `1px solid ${color}50`,
+          backdropFilter: 'blur(20px)',
+          boxShadow: `0 0 60px ${color}30, 0 20px 60px rgba(0,0,0,0.4)`,
+        }}
+        initial={{ scale: 0.1, rotateY: -180, opacity: 0 }}
+        animate={{ scale: 1,   rotateY: 0,    opacity: 1 }}
+        exit={{    scale: 0.05, rotateY: 180,  opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+      >
+        {/* Outer glow ring */}
+        <motion.div
+          className="absolute -inset-6 rounded-[44px] pointer-events-none"
+          style={{ background: color, filter: 'blur(28px)', opacity: 0.18 }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.18, 0.06, 0.18] }}
+          transition={{ duration: 1.4, repeat: Infinity }}
+        />
+
+        {/* Big emoji — 3D wobble */}
+        <motion.div
+          style={{ fontSize: 80, lineHeight: 1, transformStyle: 'preserve-3d', perspective: 400 }}
+          animate={{
+            rotateY: [0, 25, -25, 15, -15, 0],
+            rotateZ: [0, 8, -8, 4, -4, 0],
+            y: [0, -12, 0, -8, 0],
+            scale: [1, 1.12, 1],
+          }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          {r.char}
+        </motion.div>
+
+        {/* Small floating big-emoji */}
+        <motion.span
+          className="absolute -top-4 -right-4 text-3xl"
+          animate={{ rotate: [0, 20, -10, 0], scale: [1, 1.3, 1], y: [0, -6, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          {r.big}
+        </motion.span>
+
+        {/* Genre name */}
+        <motion.p
+          className="text-2xl font-black tracking-tight"
+          style={{ color, textShadow: `0 0 20px ${color}80` }}
+          animate={{ scale: [1, 1.04, 1] }}
+          transition={{ duration: 1, repeat: Infinity }}
+        >
+          {genreName}
+        </motion.p>
+
+        {/* Message */}
+        <p className="text-white/70 text-sm font-medium max-w-[180px] leading-snug">{r.msg}</p>
+
+        {/* Progress bar auto-dismiss */}
+        <div className="w-32 h-1 rounded-full overflow-hidden" style={{ background: `${color}25` }}>
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: color }}
+            initial={{ width: '100%' }}
+            animate={{ width: '0%' }}
+            transition={{ duration: 2.8, ease: 'linear' }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function HeroSlider() {
   const containerRef = useRef(null);
   const [active, setActive]       = useState(1);
@@ -41,6 +169,7 @@ export default function HeroSlider() {
   const [ripples, setRipples]     = useState([]);
   const [sparks,  setSparks]      = useState([]);
   const [ringSpeed, setRingSpeed] = useState(45);
+  const [reaction, setReaction]   = useState(null);
 
   /* ── spring-smoothed pointer (parallax) ── */
   const pCfg   = { stiffness: 28, damping: 16 };
@@ -157,6 +286,18 @@ export default function HeroSlider() {
 
   return (
     <>
+      {/* ── Genre cartoon reaction popup ── */}
+      <AnimatePresence>
+        {reaction && (
+          <GenreReaction
+            key={reaction.name}
+            genreName={reaction.name}
+            color={reaction.color}
+            onDone={() => setReaction(null)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── glowing cursor dot ── */}
       <div
         className="fixed pointer-events-none z-[99999]"
@@ -360,6 +501,8 @@ export default function HeroSlider() {
                       e.stopPropagation();
                       setActive(idx);
                       spawnSparks(e.clientX, e.clientY, color);
+                      setReaction(null);
+                      setTimeout(() => setReaction({ name: name, color }), 50);
                     }}
                     whileHover={{ scale: 1.35 }}
                     whileTap={{ scale: 0.85 }}
