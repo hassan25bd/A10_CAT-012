@@ -50,9 +50,10 @@ export default function TransactionsPage() {
                     <motion.tr key={t._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
                       <td className="font-mono text-xs text-gray-500">{t._id.slice(-8)}</td>
                       <td>
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                          t.type === 'purchase' ? 'bg-blue-500/15 text-blue-300' : 'bg-purple-500/15 text-purple-300'
-                        }`}>
+                        <span style={t.type === 'purchase'
+                          ? { background: 'rgba(59,130,246,0.22)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.4)' }
+                          : { background: 'rgba(168,85,247,0.22)', color: '#c084fc', border: '1px solid rgba(168,85,247,0.4)' }}
+                          className="text-xs font-bold px-3 py-1 rounded-full">
                           {t.type === 'purchase' ? 'Purchase' : 'Publishing Fee'}
                         </span>
                       </td>
@@ -65,11 +66,13 @@ export default function TransactionsPage() {
                       <td className="text-gray-300 text-sm">{t.ebook?.title || '—'}</td>
                       <td className="text-gold-400 font-semibold">${Number(t.amount).toFixed(2)}</td>
                       <td>
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                          t.status === 'completed' ? 'bg-green-500/15 text-green-300' :
-                          t.status === 'pending' ? 'bg-yellow-500/15 text-yellow-300' :
-                          'bg-red-500/15 text-red-300'
-                        }`}>
+                        <span style={
+                          t.status === 'completed'
+                            ? { background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.45)' }
+                            : t.status === 'pending'
+                            ? { background: 'rgba(234,179,8,0.2)', color: '#facc15', border: '1px solid rgba(234,179,8,0.45)' }
+                            : { background: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.45)' }
+                        } className="text-xs font-bold px-3 py-1 rounded-full capitalize">
                           {t.status}
                         </span>
                       </td>

@@ -75,7 +75,10 @@ export default function WriterEbooksPage() {
                       <td><span className="genre-badge">{eb.genre}</span></td>
                       <td className="text-gold-400 font-semibold">${Number(eb.price).toFixed(2)}</td>
                       <td>
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${eb.status === 'published' ? 'bg-green-500/15 text-green-300' : 'bg-yellow-500/15 text-yellow-300'}`}>
+                        <span style={eb.status === 'published'
+                          ? { background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.45)' }
+                          : { background: 'rgba(234,179,8,0.2)', color: '#facc15', border: '1px solid rgba(234,179,8,0.45)' }}
+                          className="text-xs px-3 py-1 rounded-full font-bold capitalize">
                           {eb.status}
                         </span>
                       </td>
